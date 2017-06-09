@@ -10,5 +10,7 @@ namespace Trains.Interfaces
         Town AddTown(string name);
 
         Route AddRoute(Town origin, Town destination, int distance);
+
+        int CalculateRouteDistance(params Town[] towns);
     }
 }

@@ -32,8 +32,30 @@ namespace Trains
             {
                 graph = _parser.Parse(line);
             }
+
+            // Q1
+            CheckDistance(graph, 1, "A-B-C");
+
+            // Q2
+            CheckDistance(graph, 2, "A-D");
+
+            // Q3
+            CheckDistance(graph, 3, "A-D-C");
+
+            // Q4
+            CheckDistance(graph, 4, "A-E-B-C-D");
+
+            // Q5
+            CheckDistance(graph, 5, "A-E-D");
+
             Console.WriteLine(graph);
             Console.ReadLine();
+        }
+
+        private static void CheckDistance(IGraph graph, int number, string route)
+        {
+            var q = graph.CalculateRouteDistance(Helper.ExtractTowns(route));
+            Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
         }
     }
 }
