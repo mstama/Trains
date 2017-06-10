@@ -16,10 +16,8 @@ namespace UnitTests
         {
             // Arrange
             var graph = BuildGraph();
-            var townA = new Town("A");
-            var townB = new Town("B");
             // Act
-            var output = graph.CalculateRouteDistance(townA, townB);
+            var output = graph.CalculateRouteDistance("A", "B");
 
             // Assert
             Assert.Equal<int>(5, output);
@@ -31,11 +29,9 @@ namespace UnitTests
         {
             // Arrange
             var graph = BuildGraph();
-            var townA = new Town("A");
-            var townB = new Town("B");
-            var townC = new Town("C");
+
             // Act
-            var output = graph.CalculateRouteDistance(townA, townB,townC);
+            var output = graph.CalculateRouteDistance("A", "B","C");
 
             // Assert
             Assert.Equal<int>(8, output);
@@ -45,11 +41,8 @@ namespace UnitTests
         public Graph BuildGraph()
         {
             var graph = new Graph();
-            var townA = graph.AddTown("A");
-            var townB = graph.AddTown("B");
-            var townC = graph.AddTown("C");
-            graph.AddRoute(townA, townB, 5);
-            graph.AddRoute(townB, townC, 3);
+            graph.AddRoute("A", "B", 5);
+            graph.AddRoute("B", "C", 3);
             return graph;
         }
     }

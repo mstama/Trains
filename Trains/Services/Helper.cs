@@ -9,15 +9,10 @@ namespace Trains.Services
     {
         private static char[] _separators = new char[] { ',', ' ','-' };
 
-        public static Town[] ExtractTowns(string text)
+        public static string[] ExtractNames(string text)
         {
-            var towns = text.Split(_separators, StringSplitOptions.RemoveEmptyEntries);
-            var extracted = new List<Town>();
-            foreach(var name in towns)
-            {
-                extracted.Add(new Town(name));
-            }
-            return extracted.ToArray();
+            var names = text.Split(_separators, StringSplitOptions.RemoveEmptyEntries);
+            return names;
         }
     }
 }

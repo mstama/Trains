@@ -6,20 +6,19 @@ namespace Trains.Models
 {
     public class Route
     {
-        public Town Origin { get; set; }
         public Town Destination { get; set; }
         public int Distance { get; set; }
 
         public Route(Town origin, Town destination, int distance)
         {
-            Origin = origin;
             Destination = destination;
             Distance = distance;
+            origin.AddRoute(this);
         }
 
         public override string ToString()
         {
-            return string.Format("{0}{1}{2}",Origin,Destination,Distance);
+            return string.Format("{0}{1}",Destination,Distance);
         }
     }
 }

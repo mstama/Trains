@@ -18,10 +18,11 @@ namespace UnitTests
             string input = "A";
 
             // Act
-            var output = Helper.ExtractTowns(input);
+            var output = Helper.ExtractNames(input);
 
             // Assert
-            Assert.Contains<Town>(output, t => t.Name == "A");
+            Assert.IsType<string[]>(output);
+            Assert.Equal<string>("A", output[0]);
         }
     }
 }

@@ -9,8 +9,10 @@ namespace Trains.Interfaces
     {
         Town AddTown(string name);
 
-        Route AddRoute(Town origin, Town destination, int distance);
+        Route AddRoute(string originName, string destName, int distance);
 
-        int CalculateRouteDistance(params Town[] towns);
+        int CalculateRouteDistance(params string[] names);
+
+        IList<string> FindRoutes(string originName, string destName, int depth, Func<int, bool> depthFunc);
     }
 }

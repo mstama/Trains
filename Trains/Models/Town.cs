@@ -8,6 +8,8 @@ namespace Trains.Models
     {
         public string Name { get; set; }
 
+        public IList<Route> Routes { get; private set; } = new List<Route>();
+
         public Town(string name)
         {
             Name = name;
@@ -28,6 +30,11 @@ namespace Trains.Models
         public override string ToString()
         {
             return Name;
+        }
+
+        public void AddRoute(Route route)
+        {
+            Routes.Add(route);
         }
     }
 }

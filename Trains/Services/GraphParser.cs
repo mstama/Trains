@@ -21,10 +21,7 @@ namespace Trains.Services
             var commands = text.Split(_separator, StringSplitOptions.RemoveEmptyEntries);
             foreach(var command in commands)
             {
-                var origin = graph.AddTown(command[0].ToString());
-                var destination = graph.AddTown(command[1].ToString());
-                int distance = int.Parse(command.Substring(2));
-                graph.AddRoute(origin, destination, distance);
+                graph.AddRoute(command[0].ToString(), command[1].ToString(), int.Parse(command.Substring(2)));
             }
             return graph;
         }

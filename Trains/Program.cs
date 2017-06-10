@@ -48,13 +48,16 @@ namespace Trains
             // Q5
             CheckDistance(graph, 5, "A-E-D");
 
+            // Q6
+            graph.FindRoutes("C", "C", 4, null);
+
             Console.WriteLine(graph);
             Console.ReadLine();
         }
 
         private static void CheckDistance(IGraph graph, int number, string route)
         {
-            var q = graph.CalculateRouteDistance(Helper.ExtractTowns(route));
+            var q = graph.CalculateRouteDistance(Helper.ExtractNames(route));
             Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
         }
     }
