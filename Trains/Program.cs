@@ -49,7 +49,10 @@ namespace Trains
             CheckDistance(graph, 5, "A-E-D");
 
             // Q6
-            graph.FindRoutes("C", "C", 4, null);
+            FindRoutes(graph, 6, "C", "C", 3, (i, j) => i <= j);
+
+            // Q7
+            FindRoutes(graph, 7, "A", "C", 4, (i, j) => i == j);
 
             Console.WriteLine(graph);
             Console.ReadLine();
@@ -59,6 +62,12 @@ namespace Trains
         {
             var q = graph.CalculateRouteDistance(Helper.ExtractNames(route));
             Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
+        }
+
+        private static void FindRoutes(IGraph graph, int number, string origin, string dest, int maxDepth, Func<int,int,bool> funcDepth)
+        {
+            var r = graph.FindRoutes(origin, dest, maxDepth, funcDepth);
+            Console.WriteLine("Output #{0}:{1}", number, r.Count);
         }
     }
 }
