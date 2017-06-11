@@ -54,6 +54,12 @@ namespace Trains
             // Q7
             FindRoutes(graph, 7, "A", "C", 4, (i, j) => i == j);
 
+            // Q8
+            ShortestPathDistance(graph, 8, "A", "C");
+
+            // Q9
+            ShortestPathDistance(graph, 9, "B", "B");
+
             Console.WriteLine(graph);
             Console.ReadLine();
         }
@@ -68,6 +74,12 @@ namespace Trains
         {
             var r = graph.FindRoutes(origin, dest, maxDepth, funcDepth);
             Console.WriteLine("Output #{0}:{1}", number, r.Count);
+        }
+
+        private static void ShortestPathDistance(IGraph graph,int number, string origin, string dest)
+        {
+            var d = graph.ShortestPathDistance(origin,dest);
+            Console.WriteLine("Output #{0}:{1}", number, d);
         }
     }
 }

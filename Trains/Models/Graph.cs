@@ -105,6 +105,54 @@ namespace Trains.Models
             return found;
         }
 
+        protected IList<ShortTown> ShortestPaths(string originName)
+        {
+            Town origin = FindTown(originName);
+            List<Town> visited = new List<Town>();
+            List<ShortTown> distances = new List<ShortTown>();
+            Queue<ShortTown> queue = new Queue<ShortTown>();
+            queue.Enqueue(new ShortTown(origin, origin, 0));
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                visited.Add(current.TownData);
+                var routes = current.TownData.Routes.OrderBy(r => r.Distance);
+
+
+                foreach (var route in routes)
+                {
+                    var shortDistance = distances.SingleOrDefault(s => s.TownData.Name == route.Destination.Name);
+                    if (shortDistance == null)
+                    {
+                        shortDistance = new ShortTown(route.Destination, current.TownData, route.Distance + current.Distance);
+                        distances.Add(shortDistance);
+                    }
+                    else
+                    {
+                        if (shortDistance.Distance > route.Distance + current.Distance)
+                        {
+                            shortDistance.Distance = route.Distance + current.Distance;
+                            shortDistance.Previous = current.TownData;
+                        }
+                    }
+                    // Enqueue
+                    if (!visited.Contains(route.Destination))
+                    {
+                        queue.Enqueue(new ShortTown(route.Destination, current.TownData, current.Distance + route.Distance));
+                    }
+                }
+            }
+            return distances;
+        }
+
+        public  int ShortestPathDistance(string originName, string destName)
+        {
+            Town dest = FindTown(destName);
+            var distances = ShortestPaths(originName);
+            var distance = distances.FirstOrDefault(s => s.TownData.Name == dest.Name);
+            return distance.Distance;
+        }
+
         public override string ToString()
         {
             StringBuilder text = new StringBuilder();
