@@ -71,32 +71,38 @@ namespace Trains.Models
             return towns;
         }
 
-        public IList<string> FindRoutes(string originName, string destName, int depth,Func<int,bool> depthFunc)
+        public IList<string> FindRoutes(string originName, string destName, int maxDepth,Func<int,int,bool> depthFunc)
         {
             Town origin = FindTown(originName);
             Town dest = FindTown(destName);
+            List<string> found = new List<string>();
 
-            Queue<Town> queue = new Queue<Town>();
-            Queue<int> depthQueue = new Queue<int>();
-            queue.Enqueue(origin);
-            depthQueue.Enqueue(0);
+            if (origin == null || dest == null) return found;
+            Queue<MetaTown> queue = new Queue<MetaTown>();
+            queue.Enqueue(new MetaTown(origin,0));
+
             while (queue.Count > 0)
             {
-                var current = queue.Dequeue();
+                var meta = queue.Dequeue();
+                var current = meta.TownData;
                 // Process current
-                int currentDepth = depthQueue.Dequeue();
-                Console.WriteLine("--{0}", current);
+                int currentDepth = meta.Depth;
+                string crumb = meta.Breadcrumb;
+                currentDepth++;
+                if (currentDepth <= maxDepth) {
+                    foreach (var route in current.Routes)
+                    {
+                        var child = route.Destination;
 
-                foreach (var route in current.Routes)
-                {
-                    var child = route.Destination;
-                    
-                    queue.Enqueue(child);
-                    depthQueue.Enqueue(currentDepth++);
+                        if(child == dest && depthFunc(currentDepth,maxDepth))
+                        {
+                            found.Add(string.Format("{0}{1}", crumb, child.Name));
+                        }
+                        queue.Enqueue(new MetaTown(child, currentDepth, crumb));
+                    }
                 }
             }
-
-            return null;
+            return found;
         }
 
         public override string ToString()

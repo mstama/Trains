@@ -13,6 +13,6 @@ namespace Trains.Interfaces
 
         int CalculateRouteDistance(params string[] names);
 
-        IList<string> FindRoutes(string originName, string destName, int depth, Func<int, bool> depthFunc);
+        IList<string> FindRoutes(string originName, string destName, int depth, Func<int, int,bool> depthFunc);
     }
 }
