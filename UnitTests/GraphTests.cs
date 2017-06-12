@@ -43,9 +43,8 @@ namespace UnitTests
         {
             // Arrange
             var graph = BuildGraph();
-            Func<int,int,bool> depthFunc = (i,j) => i <= j;
             // Act
-            var output = graph.FindRoutes("A", "C", 2, depthFunc);
+            var output = graph.FindPaths("A", "C", 2, PathOption.StopMax);
 
             // Assert
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Trains.Interfaces;
+using Trains.Models;
 using Trains.Services;
 
 namespace Trains
@@ -49,16 +50,19 @@ namespace Trains
             CheckDistance(graph, 5, "A-E-D");
 
             // Q6
-            FindRoutes(graph, 6, "C", "C", 3, (i, j) => i <= j);
+            FindPaths(graph, 6, "C", "C", 3, PathOption.StopMax);
 
             // Q7
-            FindRoutes(graph, 7, "A", "C", 4, (i, j) => i == j);
+            FindPaths(graph, 7, "A", "C", 4, PathOption.StopEqual);
 
             // Q8
             ShortestPathDistance(graph, 8, "A", "C");
 
             // Q9
             ShortestPathDistance(graph, 9, "B", "B");
+
+            //Q10
+            FindPaths(graph, 10, "C", "C",30,PathOption.DistanceMax);
 
             Console.WriteLine(graph);
             Console.ReadLine();
@@ -70,9 +74,9 @@ namespace Trains
             Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
         }
 
-        private static void FindRoutes(IGraph graph, int number, string origin, string dest, int maxDepth, Func<int,int,bool> funcDepth)
+        private static void FindPaths(IGraph graph, int number, string origin, string dest, int maxDepth, PathOption option)
         {
-            var r = graph.FindRoutes(origin, dest, maxDepth, funcDepth);
+            var r = graph.FindPaths(origin, dest, maxDepth, option);
             Console.WriteLine("Output #{0}:{1}", number, r.Count);
         }
 

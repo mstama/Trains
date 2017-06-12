@@ -8,10 +8,25 @@ namespace Trains.Models
 {
     public class Graph : IGraph
     {
-        private List<Town> _towns = new List<Town>();
-
         //TODO: think about indexers
-        protected IList<Town> Towns { get => _towns; }
+        protected IList<Town> Towns { get; } = new List<Town>();
+        private Dictionary<PathOption, Func<int, int, int, bool>> _breakFunc = new Dictionary<PathOption, Func< int, int, int, bool>>();
+        private Dictionary<PathOption, Func< int, int, int, bool>> _acceptFunc = new Dictionary<PathOption, Func< int, int, int, bool>>();
+        public Graph()
+        {
+            _breakFunc.Add(PathOption.DistanceMax, DistanceMaxEqual);
+            _breakFunc.Add(PathOption.DistanceMaxEqual, DistanceMaxEqual);
+            _breakFunc.Add(PathOption.DistanceEqual, DistanceMaxEqual);
+            _breakFunc.Add(PathOption.StopMax, StopMaxEqual);
+            _breakFunc.Add(PathOption.StopMaxEqual, StopMaxEqual);
+            _breakFunc.Add(PathOption.StopEqual, StopMaxEqual);
+            _acceptFunc.Add(PathOption.DistanceMax, DistanceMax);
+            _acceptFunc.Add(PathOption.DistanceMaxEqual, DistanceMaxEqual);
+            _acceptFunc.Add(PathOption.DistanceEqual, DistanceEqual);
+            _acceptFunc.Add(PathOption.StopMax, StopMax);
+            _acceptFunc.Add(PathOption.StopMaxEqual, StopMaxEqual);
+            _acceptFunc.Add(PathOption.StopEqual, StopEqual);
+        }
 
         public Route AddRoute(string originName, string destName, int distance)
         {
@@ -71,12 +86,13 @@ namespace Trains.Models
             return towns;
         }
 
-        public IList<string> FindRoutes(string originName, string destName, int maxDepth,Func<int,int,bool> depthFunc)
+        public IList<string> FindPaths(string originName, string destName, int limit, PathOption option)
         {
             Town origin = FindTown(originName);
             Town dest = FindTown(destName);
             List<string> found = new List<string>();
-
+            Func<int, int, int, bool> breakFunc = _breakFunc[option];
+            Func<int, int, int, bool> acceptFunc = _acceptFunc[option];
             if (origin == null || dest == null) return found;
             Queue<MetaTown> queue = new Queue<MetaTown>();
             queue.Enqueue(new MetaTown(origin,0));
@@ -88,21 +104,58 @@ namespace Trains.Models
                 // Process current
                 int currentDepth = meta.Depth;
                 string crumb = meta.Breadcrumb;
+                int totalDistance = meta.TotalDistance;
                 currentDepth++;
-                if (currentDepth <= maxDepth) {
+                if (breakFunc(currentDepth,totalDistance,limit)) {
                     foreach (var route in current.Routes)
                     {
                         var child = route.Destination;
 
-                        if(child == dest && depthFunc(currentDepth,maxDepth))
+                        if (child == dest && acceptFunc(currentDepth, totalDistance + route.Distance, limit))
                         {
                             found.Add(string.Format("{0}{1}", crumb, child.Name));
                         }
-                        queue.Enqueue(new MetaTown(child, currentDepth, crumb));
+                        queue.Enqueue(new MetaTown(child, currentDepth, crumb, totalDistance+route.Distance));
                     }
                 }
             }
             return found;
+        }
+
+        private bool StopMax(int stop, int distance, int limit)
+        {
+            if (stop < limit) return true;
+            return false;
+        }
+
+        private bool StopMaxEqual(int stop, int distance, int limit)
+        {
+            if (stop <= limit) return true;
+            return false;
+        }
+
+        private bool StopEqual(int stop, int distance, int limit)
+        {
+            if (stop == limit) return true;
+            return false;
+        }
+
+        private bool DistanceMax(int stop, int distance, int limit)
+        {
+            if (distance < limit) return true;
+            return false;
+        }
+
+        private bool DistanceMaxEqual(int stop, int distance, int limit)
+        {
+            if (distance <= limit) return true;
+            return false;
+        }
+
+        private bool DistanceEqual(int stop, int distance, int limit)
+        {
+            if (distance == limit) return true;
+            return false;
         }
 
         protected IList<ShortTown> ShortestPaths(string originName)
