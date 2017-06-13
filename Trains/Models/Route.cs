@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Trains.Models
+﻿namespace Trains.Models
 {
+    /// <summary>
+    /// Represents a route
+    /// </summary>
     public class Route
     {
-        public Town Destination { get; set; }
-        public int Distance { get; set; }
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="destination"></param>
+        /// <param name="distance"></param>
         public Route(Town origin, Town destination, int distance)
         {
             Destination = destination;
@@ -16,9 +18,19 @@ namespace Trains.Models
             origin.AddRoute(this);
         }
 
+        /// <summary>
+        /// Destination
+        /// </summary>
+        public Town Destination { get; }
+
+        /// <summary>
+        /// Distance
+        /// </summary>
+        public int Distance { get; }
+
         public override string ToString()
         {
-            return string.Format("{0}{1}",Destination,Distance);
+            return string.Format("{0}{1}", Destination, Distance);
         }
     }
 }

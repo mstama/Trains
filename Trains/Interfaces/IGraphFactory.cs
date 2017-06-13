@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Trains.Models;
-
-namespace Trains.Interfaces
+﻿namespace Trains.Interfaces
 {
+    /// <summary>
+    /// Graph factory interface
+    /// </summary>
     public interface IGraphFactory
     {
+        /// <summary>
+        /// Create graph
+        /// </summary>
+        /// <returns></returns>
         IGraph CreateGraph();
     }
 }

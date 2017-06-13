@@ -1,11 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Trains.Interfaces
+﻿namespace Trains.Interfaces
 {
-    public interface IGraphParser<TSource,TTarget>
+    /// <summary>
+    /// Parser interface
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TTarget"></typeparam>
+    public interface IGraphParser<TSource, TTarget>
     {
+        /// <summary>
+        /// Parse
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         TTarget Parse(TSource input);
     }
 }

@@ -1,40 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Trains.Models
 {
+    /// <summary>
+    /// Represents a town
+    /// </summary>
     public class Town
     {
-        public string Name { get; set; }
-
-        public IList<Route> Routes { get; private set; } = new List<Route>();
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="name"></param>
         public Town(string name)
         {
             Name = name;
         }
 
-        public override bool Equals(object obj)
-        {
-            var target = obj as Town;
-            if (target == null) return false;
-            return Name == target.Name;
-        }
+        /// <summary>
+        /// Name of the town
+        /// </summary>
+        public string Name { get; }
 
-        public override int GetHashCode()
+        /// <summary>
+        /// Routes from town
+        /// </summary>
+        public IList<Route> Routes { get; } = new List<Route>();
+
+        /// <summary>
+        /// Add route to town
+        /// </summary>
+        /// <param name="route"></param>
+        public void AddRoute(Route route)
         {
-            return Name.GetHashCode();
+            Routes.Add(route);
         }
 
         public override string ToString()
         {
             return Name;
-        }
-
-        public void AddRoute(Route route)
-        {
-            Routes.Add(route);
         }
     }
 }
