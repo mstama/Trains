@@ -6,7 +6,7 @@ using Trains.Interfaces;
 
 namespace Trains.Models
 {
-    public class Graph : IGraph
+    public class Graph : IGraph, IGraphQuery
     {
         private static Dictionary<PathOption, Func<int, int, int, bool>> _acceptFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
 

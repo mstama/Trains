@@ -12,5 +12,10 @@ namespace Trains.Services
         {
             return new Graph();
         }
+
+        public IGraphQuery RetrieveGraph(IGraph graph)
+        {
+            return (IGraphQuery)graph;
+        }
     }
 }

@@ -11,10 +11,6 @@ namespace Trains.Interfaces
 
         Route AddRoute(string originName, string destName, int distance);
 
-        int CalculateRouteDistance(params string[] names);
 
-        IList<string> FindPaths(string originName, string destName, int limit, PathOption option);
-
-        int ShortestPathDistance(string originName, string destName);
     }
 }

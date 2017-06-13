@@ -10,5 +10,12 @@
         /// </summary>
         /// <returns></returns>
         IGraph CreateGraph();
+
+        /// <summary>
+        /// Return graph
+        /// </summary>
+        /// <param name="graph"></param>
+        /// <returns></returns>
+        IGraphQuery RetrieveGraph(IGraph graph);
     }
 }
