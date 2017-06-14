@@ -15,7 +15,7 @@ namespace Trains.Interfaces
         /// </summary>
         /// <param name="names"></param>
         /// <returns></returns>
-        int CalculateRouteDistance(params string[] names);
+        int TotalRouteDistance(params string[] names);
 
         /// <summary>
         /// Find all paths between 2 towns

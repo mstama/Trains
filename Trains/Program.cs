@@ -75,7 +75,7 @@ namespace Trains
 
         private static void CheckDistance(IGraphQuery graph, int number, string route)
         {
-            var q = graph.CalculateRouteDistance(Helper.ExtractNames(route));
+            var q = graph.TotalRouteDistance(Helper.ExtractNames(route));
             Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
         }
 

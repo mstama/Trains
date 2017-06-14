@@ -58,7 +58,7 @@ namespace Trains.Models
             return town;
         }
 
-        public int CalculateRouteDistance(params string[] names)
+        public int TotalRouteDistance(params string[] names)
         {
             var towns = FindTowns(names);
             if (towns.Count < 2) return -1;
