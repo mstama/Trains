@@ -79,9 +79,9 @@ namespace Trains
             Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
         }
 
-        private static void FindPaths(IGraphQuery graph, int number, string origin, string dest, int maxDepth, PathOption option)
+        private static void FindPaths(IGraphQuery graph, int number, string origin, string dest, int maxStops, PathOption option)
         {
-            var r = graph.FindPaths(origin, dest, maxDepth, option);
+            var r = graph.FindPaths(origin, dest, maxStops, option);
             Console.WriteLine("Output #{0}:{1}", number, r.Count);
         }
 

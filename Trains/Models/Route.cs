@@ -26,7 +26,7 @@
         /// <summary>
         /// Distance
         /// </summary>
-        public int Distance { get; }
+        public int Distance { get; set; }
 
         public override string ToString()
         {

@@ -9,9 +9,9 @@ namespace Trains.Models
         public Town TownData { get; set; }
         public Town Previous { get; set; }
         public int Distance { get; set; }
-        public ShortTown(Town destination, Town previous, int distance)
+        public ShortTown(Town dest, Town previous, int distance)
         {
-            TownData = destination;
+            TownData = dest;
             Previous = previous;
             Distance = distance;
         }

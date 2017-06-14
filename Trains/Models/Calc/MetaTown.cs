@@ -7,22 +7,22 @@ namespace Trains.Models
     public class MetaTown
     {
         public Town TownData { get; set; }
-        public int Depth { get; set; }
+        public int Stops { get; set; }
         public string Breadcrumb { get; set; }
         public int TotalDistance { get; set; }
 
-        public MetaTown(Town town, int depth, string breadcrumb,int distance)
+        public MetaTown(Town town, int stops, string breadcrumb,int distance)
         {
             TownData = town;
-            Depth = depth;
+            Stops = stops;
             Breadcrumb = string.Format("{0}{1}",breadcrumb, town.Name);
             TotalDistance = distance;
         }
 
-        public MetaTown(Town town, int depth)
+        public MetaTown(Town town, int stops)
         {
             TownData = town;
-            Depth = depth;
+            Stops = stops;
             Breadcrumb = town.Name;
             TotalDistance = 0;
         }

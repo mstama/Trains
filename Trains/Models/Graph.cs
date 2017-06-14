@@ -6,12 +6,18 @@ using Trains.Interfaces;
 
 namespace Trains.Models
 {
+    /// <summary>
+    /// Represents a graph
+    /// </summary>
     public class Graph : IGraph, IGraphQuery
     {
         private static Dictionary<PathOption, Func<int, int, int, bool>> _acceptFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
 
         private static Dictionary<PathOption, Func<int, int, int, bool>> _breakFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
 
+        /// <summary>
+        /// Static constructor
+        /// </summary>
         static Graph()
         {
             _breakFunc.Add(PathOption.DistanceMax, DistanceMaxEqual);
@@ -28,16 +34,29 @@ namespace Trains.Models
             _acceptFunc.Add(PathOption.StopEqual, StopEqual);
         }
 
-        //TODO: think about indexers
+        /// <summary>
+        /// Towns registered
+        /// </summary>
         public IList<Town> Towns { get; } = new List<Town>();
 
-        public Route AddRoute(string originName, string destName, int distance)
+        /// <summary>
+        /// Add or retrieve a route if exists
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="dest"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
+        public Route AddRoute(string origin, string dest, int distance)
         {
-            var origin = AddTown(originName);
-            var route = origin.Routes.FirstOrDefault(r => r.Destination.Name == destName);
+            var originTown = AddTown(origin);
+            var route = originTown.Routes.FirstOrDefault(r => r.Destination.Name == dest);
             if (route == null)
             {
-                route = new Route(origin, AddTown(destName), distance);
+                route = new Route(originTown, AddTown(dest), distance);
+            }
+            else
+            {
+                if (route.Distance != distance) route.Distance = distance;
             }
             return route;
         }
@@ -58,6 +77,11 @@ namespace Trains.Models
             return town;
         }
 
+        /// <summary>
+        /// Total route distance
+        /// </summary>
+        /// <param name="names"></param>
+        /// <returns></returns>
         public int TotalRouteDistance(params string[] names)
         {
             var towns = FindTowns(names);
@@ -75,49 +99,69 @@ namespace Trains.Models
             return total;
         }
 
-        public IList<string> FindPaths(string originName, string destName, int limit, PathOption option)
+        /// <summary>
+        /// Find all paths between 2 towns
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="dest"></param>
+        /// <param name="limit"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public IList<string> FindPaths(string origin, string dest, int limit, PathOption option)
         {
-            Town origin = FindTown(originName);
-            Town dest = FindTown(destName);
+            Town originTown = FindTown(origin);
+            Town destDest = FindTown(dest);
             List<string> found = new List<string>();
+            // Stop condition
             Func<int, int, int, bool> breakFunc = _breakFunc[option];
+            // Break condition
             Func<int, int, int, bool> acceptFunc = _acceptFunc[option];
-            if (origin == null || dest == null) return found;
+            if (originTown == null || destDest == null) return found;
             Queue<MetaTown> queue = new Queue<MetaTown>();
-            queue.Enqueue(new MetaTown(origin, 0));
+            queue.Enqueue(new MetaTown(originTown, 0));
 
             while (queue.Count > 0)
             {
                 var meta = queue.Dequeue();
                 var current = meta.TownData;
                 // Process current
-                int currentDepth = meta.Depth;
+                int currentStops = meta.Stops;
                 string crumb = meta.Breadcrumb;
                 int totalDistance = meta.TotalDistance;
-                currentDepth++;
-                if (breakFunc(currentDepth, totalDistance, limit))
+                currentStops++;
+                if (breakFunc(currentStops, totalDistance, limit))
                 {
                     foreach (var route in current.Routes)
                     {
                         var child = route.Destination;
 
-                        if (child == dest && acceptFunc(currentDepth, totalDistance + route.Distance, limit))
+                        if (child == destDest && acceptFunc(currentStops, totalDistance + route.Distance, limit))
                         {
                             found.Add(string.Format("{0}{1}", crumb, child.Name));
                         }
-                        queue.Enqueue(new MetaTown(child, currentDepth, crumb, totalDistance + route.Distance));
+                        queue.Enqueue(new MetaTown(child, currentStops, crumb, totalDistance + route.Distance));
                     }
                 }
             }
             return found;
         }
 
+        /// <summary>
+        /// Return a town given a name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public Town FindTown(string name)
         {
             var town = Towns.FirstOrDefault(t => t.Name == name);
             return town;
         }
 
+        /// <summary>
+        /// Return towns given a set of names
+        /// </summary>
+        /// <param name="names"></param>
+        /// <returns></returns>
         public IList<Town> FindTowns(params string[] names)
         {
             if (names == null) return new List<Town>();
@@ -131,11 +175,17 @@ namespace Trains.Models
             return towns;
         }
 
-        public int ShortestPathDistance(string originName, string destName)
+        /// <summary>
+        /// Return shortest path distance between 2 towns
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="dest"></param>
+        /// <returns></returns>
+        public int ShortestPathDistance(string origin, string dest)
         {
-            Town dest = FindTown(destName);
-            var distances = ShortestPaths(originName);
-            var distance = distances.FirstOrDefault(s => s.TownData.Name == dest.Name);
+            Town destTown = FindTown(dest);
+            var distances = ShortestPaths(origin);
+            var distance = distances.FirstOrDefault(s => s.TownData.Name == destTown.Name);
             return distance.Distance;
         }
 
@@ -195,36 +245,78 @@ namespace Trains.Models
             return distances;
         }
 
+        /// <summary>
+        /// Distance equal limit
+        /// </summary>
+        /// <param name="stop"></param>
+        /// <param name="distance"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         private static bool DistanceEqual(int stop, int distance, int limit)
         {
             if (distance == limit) return true;
             return false;
         }
 
+        /// <summary>
+        /// Distance less than limit
+        /// </summary>
+        /// <param name="stop"></param>
+        /// <param name="distance"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         private static bool DistanceMax(int stop, int distance, int limit)
         {
             if (distance < limit) return true;
             return false;
         }
 
+        /// <summary>
+        /// Distance less or equal limit
+        /// </summary>
+        /// <param name="stop"></param>
+        /// <param name="distance"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         private static bool DistanceMaxEqual(int stop, int distance, int limit)
         {
             if (distance <= limit) return true;
             return false;
         }
 
+        /// <summary>
+        /// # Stops equal limit
+        /// </summary>
+        /// <param name="stop"></param>
+        /// <param name="distance"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         private static bool StopEqual(int stop, int distance, int limit)
         {
             if (stop == limit) return true;
             return false;
         }
 
+        /// <summary>
+        /// # Stops less than limit
+        /// </summary>
+        /// <param name="stop"></param>
+        /// <param name="distance"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         private static bool StopMax(int stop, int distance, int limit)
         {
             if (stop < limit) return true;
             return false;
         }
 
+        /// <summary>
+        /// # Stops less or equal than limit
+        /// </summary>
+        /// <param name="stop"></param>
+        /// <param name="distance"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         private static bool StopMaxEqual(int stop, int distance, int limit)
         {
             if (stop <= limit) return true;

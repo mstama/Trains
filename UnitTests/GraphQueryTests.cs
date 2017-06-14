@@ -119,6 +119,17 @@ namespace UnitTests
             Assert.Equal<int>(5, output);
         }
 
+        [Fact]
+        [Trait("Category", _category)]
+        public void TotalRouteDistanceErrorTest()
+        {
+            // Act
+            var output = _target.TotalRouteDistance("A", "X");
+
+            // Assert
+            Assert.Equal<int>(-1, output);
+        }
+
         private IGraphQuery BuildGraph()
         {
             var graph = new Graph();
