@@ -9,63 +9,68 @@ namespace UnitTests
 
         [Fact]
         [Trait("Category", _category)]
-        public void AddTownTest()
+        public void AddRouteCreateTest()
         {
             // Arrange
-            var graph = BuildGraph();
-            // Act
-            var output = graph.FindPaths("A", "C", 2, PathOption.StopMax);
-
-            // Assert
-        }
-
-        public Graph BuildGraph()
-        {
             var graph = new Graph();
-            graph.AddRoute("A", "B", 5);
-            graph.AddRoute("B", "C", 3);
-            graph.AddRoute("A", "D", 6);
-            graph.AddRoute("D", "C", 4);
-            return graph;
+            // Act
+            var output = graph.AddRoute("X", "Y", 5);
+
+            // Assert
+            Assert.NotEmpty(graph.Towns);
+            Assert.Contains<Town>(graph.Towns, t => t.Name == "X");
+            Assert.Contains<Town>(graph.Towns, t => t.Name == "Y");
+            Assert.Contains<Route>(graph.Towns[0].Routes, r => r.Destination.Name == "Y");
+            Assert.Equal<int>(2, graph.Towns.Count);
         }
 
         [Fact]
         [Trait("Category", _category)]
-        public void CalculateRouteDistanceTest()
+        public void AddRouteRetrieveTest()
         {
             // Arrange
-            var graph = BuildGraph();
+            var graph = new Graph();
+            var t1 = graph.AddTown("X");
+            var t2 = graph.AddTown("Y");
             // Act
-            var output = graph.CalculateRouteDistance("A", "B");
+            var output = graph.AddRoute("X", "Y", 5);
 
             // Assert
-            Assert.Equal<int>(5, output);
+            Assert.NotEmpty(graph.Towns);
+            Assert.Contains<Town>(graph.Towns, t => t.Name == "X");
+            Assert.Contains<Town>(graph.Towns, t => t.Name == "Y");
+            Assert.Contains<Route>(graph.Towns[0].Routes, r => r.Destination.Name == "Y");
+            Assert.Equal<int>(2, graph.Towns.Count);
         }
 
         [Fact]
         [Trait("Category", _category)]
-        public void CalculateRouteDistanceTest2()
+        public void AddTownCreateTest()
         {
             // Arrange
-            var graph = BuildGraph();
-
+            var graph = new Graph();
             // Act
-            var output = graph.CalculateRouteDistance("A", "B", "C");
+            var output = graph.AddTown("Z");
 
             // Assert
-            Assert.Equal<int>(8, output);
+            Assert.NotEmpty(graph.Towns);
+            Assert.Contains<Town>(graph.Towns, t => t.Name == "Z");
         }
 
         [Fact]
         [Trait("Category", _category)]
-        public void FindRoutesTest()
+        public void AddTownRetrieveTest()
         {
             // Arrange
-            var graph = BuildGraph();
+            var graph = new Graph();
+            var t1 = graph.AddTown("Z");
             // Act
-            var output = graph.FindPaths("A", "C", 2, PathOption.StopMax);
+            var output = graph.AddTown("Z");
 
             // Assert
+            Assert.NotEmpty(graph.Towns);
+            Assert.Contains<Town>(graph.Towns, t => t.Name == "Z");
+            Assert.Equal<int>(1, graph.Towns.Count);
         }
     }
 }
