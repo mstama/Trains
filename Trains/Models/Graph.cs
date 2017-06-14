@@ -29,7 +29,7 @@ namespace Trains.Models
         }
 
         //TODO: think about indexers
-        protected IList<Town> Towns { get; } = new List<Town>();
+        public IList<Town> Towns { get; } = new List<Town>();
 
         public Route AddRoute(string originName, string destName, int distance)
         {
@@ -42,6 +42,11 @@ namespace Trains.Models
             return route;
         }
 
+        /// <summary>
+        /// Add or retrieve a town
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public Town AddTown(string name)
         {
             var town = FindTown(name);

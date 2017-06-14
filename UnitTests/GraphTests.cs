@@ -59,5 +59,20 @@ namespace UnitTests
             graph.AddRoute("D", "C", 4);
             return graph;
         }
+
+        [Fact]
+        [Trait("Category", _category)]
+        public void AddTownTest()
+        {
+            // Arrange
+            var graph = BuildGraph();
+            // Act
+            var output = graph.FindPaths("A", "C", 2, PathOption.StopMax);
+
+            // Assert
+
+        }
+
+
     }
 }

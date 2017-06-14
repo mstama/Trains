@@ -12,7 +12,7 @@
         IGraph CreateGraph();
 
         /// <summary>
-        /// Return graph
+        /// Return graph to query
         /// </summary>
         /// <param name="graph"></param>
         /// <returns></returns>
