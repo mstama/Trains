@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Trains.Models;
 using Trains.Services;
 using Xunit;
 
