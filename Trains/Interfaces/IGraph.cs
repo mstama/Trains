@@ -11,7 +11,7 @@ namespace Trains.Interfaces
         /// <summary>
         /// List of towns
         /// </summary>
-        IList<Town> Towns { get; }
+        IDictionary<string,Town> Towns { get; }
 
         /// <summary>
         /// Add a route to graph

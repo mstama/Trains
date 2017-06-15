@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Trains.Interfaces;
 
 namespace Trains.Models
 {
@@ -11,9 +13,10 @@ namespace Trains.Models
         /// Constructor
         /// </summary>
         /// <param name="name"></param>
-        public Town(string name)
+        public Town(IGraph graph, string name)
         {
             Name = name;
+            graph.Towns[name] = this;
         }
 
         /// <summary>
@@ -24,7 +27,7 @@ namespace Trains.Models
         /// <summary>
         /// Routes from town
         /// </summary>
-        public IList<Route> Routes { get; } = new List<Route>();
+        public IDictionary<string, Route> Routes { get; } = new Dictionary<string, Route>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Add route to town
@@ -32,7 +35,7 @@ namespace Trains.Models
         /// <param name="route"></param>
         public void AddRoute(Route route)
         {
-            Routes.Add(route);
+            Routes[route.Destination.Name] = route;
         }
 
         public override string ToString()

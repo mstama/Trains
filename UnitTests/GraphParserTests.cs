@@ -63,7 +63,7 @@ namespace UnitTests
             // Assert
             Assert.IsAssignableFrom<IGraph>(output);
             Assert.NotEmpty(output.Towns);
-            Assert.NotEmpty(output.Towns[0].Routes);
+            Assert.NotEmpty(output.Towns["A"].Routes);
         }
     }
 }

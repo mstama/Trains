@@ -34,5 +34,7 @@ namespace Trains.Interfaces
         /// <param name="dest"></param>
         /// <returns></returns>
         int ShortestPathDistance(string origin, string dest);
+
+        IList<Tuple<Town, Town, int>> ShortestPaths(string origin);
     }
 }

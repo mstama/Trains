@@ -37,7 +37,7 @@ namespace Trains.Models
         /// <summary>
         /// Towns registered
         /// </summary>
-        public IList<Town> Towns { get; } = new List<Town>();
+        public IDictionary<string,Town> Towns { get; } = new Dictionary<string,Town>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Add or retrieve a route if exists
@@ -49,8 +49,7 @@ namespace Trains.Models
         public Route AddRoute(string origin, string dest, int distance)
         {
             var originTown = AddTown(origin);
-            var route = originTown.Routes.FirstOrDefault(r => r.Destination.Name == dest);
-            if (route == null)
+            if (!originTown.Routes.TryGetValue(dest, out Route route))
             {
                 route = new Route(originTown, AddTown(dest), distance);
             }
@@ -68,11 +67,9 @@ namespace Trains.Models
         /// <returns></returns>
         public Town AddTown(string name)
         {
-            var town = FindTown(name);
-            if (town == null)
+            if (!Towns.TryGetValue(name, out Town town))
             {
-                town = new Town(name);
-                Towns.Add(town);
+                town = new Town(this,name);
             }
             return town;
         }
@@ -84,17 +81,15 @@ namespace Trains.Models
         /// <returns></returns>
         public int TotalRouteDistance(params string[] names)
         {
-            var towns = FindTowns(names);
-            if (towns.Count < 2) return -1;
-            var previous = towns[0];
+            if (names==null||names.Length < 2) return -1;
+            if (!Towns.TryGetValue(names[0],out Town previous)) return -1;
             int total = 0;
-            for (int i = 1; i < towns.Count; i++)
+            for (int i = 1; i < names.Length; i++)
             {
-                var current = towns[i];
-                var route = previous.Routes.FirstOrDefault(r => r.Destination.Name == current.Name);
-                if (route == null) return -1;
+                var current = names[i];
+                if (!previous.Routes.TryGetValue(current, out Route route)) return -1;
                 total += route.Distance;
-                previous = current;
+                previous = route.Destination;
             }
             return total;
         }
@@ -109,8 +104,8 @@ namespace Trains.Models
         /// <returns></returns>
         public IList<string> FindPaths(string origin, string dest, int limit, PathOption option)
         {
-            Town originTown = FindTown(origin);
-            Town destDest = FindTown(dest);
+            Town originTown = Towns[origin];
+            Town destDest = Towns[dest];
             List<string> found = new List<string>();
             // Stop condition
             Func<int, int, int, bool> breakFunc = _breakFunc[option];
@@ -131,7 +126,7 @@ namespace Trains.Models
                 currentStops++;
                 if (breakFunc(currentStops, totalDistance, limit))
                 {
-                    foreach (var route in current.Routes)
+                    foreach (var route in current.Routes.Values)
                     {
                         var child = route.Destination;
 
@@ -147,17 +142,6 @@ namespace Trains.Models
         }
 
         /// <summary>
-        /// Return a town given a name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public Town FindTown(string name)
-        {
-            var town = Towns.FirstOrDefault(t => t.Name == name);
-            return town;
-        }
-
-        /// <summary>
         /// Return towns given a set of names
         /// </summary>
         /// <param name="names"></param>
@@ -168,7 +152,7 @@ namespace Trains.Models
             var towns = new List<Town>();
             foreach (var name in names)
             {
-                var town = FindTown(name);
+                var town = Towns[name];
                 if (town == null) return new List<Town>();
                 towns.Add(town);
             }
@@ -183,10 +167,10 @@ namespace Trains.Models
         /// <returns></returns>
         public int ShortestPathDistance(string origin, string dest)
         {
-            Town destTown = FindTown(dest);
+            Town destTown = Towns[dest];
             var distances = ShortestPaths(origin);
-            var distance = distances.FirstOrDefault(s => s.TownData.Name == destTown.Name);
-            return distance.Distance;
+            var distance = distances.FirstOrDefault(s => s.Item1.Name == destTown.Name);
+            return distance.Item3;
         }
 
         public override string ToString()
@@ -196,9 +180,9 @@ namespace Trains.Models
             {
                 text.AppendFormat("{0}\n", town);
             }
-            foreach (var town in Towns)
+            foreach (var town in Towns.Values)
             {
-                foreach (var route in town.Routes)
+                foreach (var route in town.Routes.Values)
                 {
                     text.AppendFormat("{0}{1}\n", town, route);
                 }
@@ -206,39 +190,90 @@ namespace Trains.Models
             return text.ToString();
         }
 
-        protected IList<ShortTown> ShortestPaths(string originName)
+        /// <summary>
+        /// Find all shortest paths from a origin
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <returns></returns>
+        public IList<Tuple<Town, Town, int>> ShortestPaths(string origin)
         {
-            Town origin = FindTown(originName);
-            List<Town> visited = new List<Town>();
-            List<ShortTown> distances = new List<ShortTown>();
-            Queue<ShortTown> queue = new Queue<ShortTown>();
-            queue.Enqueue(new ShortTown(origin, origin, 0));
-            while (queue.Count > 0)
+            Town originTown = Towns[origin];
+            List<Tuple<Town, Town, int>> distances = new List<Tuple<Town, Town, int>>();
+            List<ShortTown> bag = new List<ShortTown>();
+            foreach (var town in Towns.Values)
             {
-                var current = queue.Dequeue();
-                visited.Add(current.TownData);
-                var routes = current.TownData.Routes.OrderBy(r => r.Distance);
+                bag.Add(new ShortTown(town, null, int.MaxValue));
+            }
 
-                foreach (var route in routes)
+            var initial = bag.Find(t => t.TownData.Name == originTown.Name);
+            initial.Previous = originTown;
+            initial.Distance = 0;
+
+            while (bag.Count > 0)
+            {
+                // min distance
+                var current = bag.OrderBy(t => t.Distance).FirstOrDefault();
+                bag.Remove(current);
+                distances.Add(Tuple.Create(current.TownData, current.Previous, current.Distance));
+                var routes = current.TownData.Routes;
+
+                foreach (var route in routes.Values)
                 {
-                    var shortDistance = distances.SingleOrDefault(s => s.TownData.Name == route.Destination.Name);
-                    if (shortDistance == null)
+                    var target = bag.FirstOrDefault(t => t.TownData.Name == route.Destination.Name);
+                    // not visited yet
+                    if (target != null)
                     {
-                        shortDistance = new ShortTown(route.Destination, current.TownData, route.Distance + current.Distance);
-                        distances.Add(shortDistance);
-                    }
-                    else
-                    {
-                        if (shortDistance.Distance > route.Distance + current.Distance)
+                        int currentDistance = current.Distance + route.Distance;
+                        if (currentDistance < target.Distance)
                         {
-                            shortDistance.Distance = route.Distance + current.Distance;
-                            shortDistance.Previous = current.TownData;
+                            target.Distance = currentDistance;
+                            target.Previous = current.TownData;
                         }
                     }
-                    // Enqueue
-                    if (!visited.Contains(route.Destination))
+                }
+            }
+            return distances;
+        }
+
+        /// <summary>
+        /// Find all shortest paths from a origin
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <returns></returns>
+        protected IList<Tuple<Town,Town,int>> ShortestPaths(string origin, string dest)
+        {
+            Town originTown = Towns[origin];
+            List<Tuple<Town,Town,int>> distances = new List<Tuple<Town, Town, int>>();
+            List<ShortTown> bag = new List<ShortTown>();
+            foreach(var town in Towns.Values)
+            {
+                bag.Add(new ShortTown(town,null,int.MaxValue));
+            }
+
+            var initial = bag.Find(t => t.TownData.Name == originTown.Name);
+            initial.Previous = originTown;
+            initial.Distance = 0;
+
+            while (bag.Count> 0)
+            {
+                // min distance
+                var current = bag.OrderBy(t => t.Distance).FirstOrDefault();
+                bag.Remove(current);
+                distances.Add(Tuple.Create(current.TownData, current.Previous, current.Distance));
+                var routes = current.TownData.Routes;
+
+                foreach (var route in routes.Values)
+                {
+                    var target = bag.FirstOrDefault(t => t.TownData.Name == route.Destination.Name);
+                    // not visited yet
+                    if (target != null)
                     {
-                        queue.Enqueue(new ShortTown(route.Destination, current.TownData, current.Distance + route.Distance));
+                        int currentDistance = current.Distance + route.Distance;
+                        if (currentDistance < target.Distance)
+                        {
+                            target.Distance = currentDistance;
+                            target.Previous = current.TownData;
+                        }
                     }
                 }
             }

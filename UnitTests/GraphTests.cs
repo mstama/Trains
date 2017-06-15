@@ -18,9 +18,9 @@ namespace UnitTests
 
             // Assert
             Assert.NotEmpty(graph.Towns);
-            Assert.Contains<Town>(graph.Towns, t => t.Name == "X");
-            Assert.Contains<Town>(graph.Towns, t => t.Name == "Y");
-            Assert.Contains<Route>(graph.Towns[0].Routes, r => r.Destination.Name == "Y");
+            Assert.True(graph.Towns.ContainsKey("X"));
+            Assert.True(graph.Towns.ContainsKey("Y"));
+            Assert.True(graph.Towns["X"].Routes.ContainsKey("Y"));
             Assert.Equal<int>(2, graph.Towns.Count);
         }
 
@@ -37,9 +37,9 @@ namespace UnitTests
 
             // Assert
             Assert.NotEmpty(graph.Towns);
-            Assert.Contains<Town>(graph.Towns, t => t.Name == "X");
-            Assert.Contains<Town>(graph.Towns, t => t.Name == "Y");
-            Assert.Contains<Route>(graph.Towns[0].Routes, r => r.Destination.Name == "Y");
+            Assert.True(graph.Towns.ContainsKey("X"));
+            Assert.True(graph.Towns.ContainsKey("Y"));
+            Assert.True(graph.Towns["X"].Routes.ContainsKey("Y"));
             Assert.Equal<int>(2, graph.Towns.Count);
         }
 
@@ -53,8 +53,7 @@ namespace UnitTests
             var output = graph.AddTown("Z");
 
             // Assert
-            Assert.NotEmpty(graph.Towns);
-            Assert.Contains<Town>(graph.Towns, t => t.Name == "Z");
+            Assert.True(graph.Towns.ContainsKey("Z"));
         }
 
         [Fact]
@@ -68,8 +67,7 @@ namespace UnitTests
             var output = graph.AddTown("Z");
 
             // Assert
-            Assert.NotEmpty(graph.Towns);
-            Assert.Contains<Town>(graph.Towns, t => t.Name == "Z");
+            Assert.True(graph.Towns.ContainsKey("Z"));
             Assert.Equal<int>(1, graph.Towns.Count);
         }
     }

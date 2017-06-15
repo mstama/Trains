@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Trains.Models
 {
+    /// <summary>
+    /// Processing class to find shortest path
+    /// </summary>
     public class ShortTown
     {
         public Town TownData { get; set; }

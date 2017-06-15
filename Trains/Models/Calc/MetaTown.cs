@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Trains.Models
 {
+    /// <summary>
+    /// Processing class to find all paths
+    /// </summary>
     public class MetaTown
     {
         public Town TownData { get; set; }
