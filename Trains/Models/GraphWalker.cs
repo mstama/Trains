@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Trains.Interfaces;
 
 namespace Trains.Models
 {
+    /// <summary>
+    /// Graph walker
+    /// </summary>
     public class GraphWalker : IGraphWalker
     {
         private static Dictionary<PathOption, Func<int, int, int, bool>> _acceptFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
 
         private static Dictionary<PathOption, Func<int, int, int, bool>> _breakFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
+
+        private StringComparer _comparer = StringComparer.OrdinalIgnoreCase;
 
         /// <summary>
         /// Static constructor
@@ -40,14 +46,15 @@ namespace Trains.Models
         /// <returns></returns>
         public IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, PathOption option)
         {
-            Town originTown = graph.Towns[origin];
-            Town destDest = graph.Towns[dest];
             List<string> found = new List<string>();
+            if (!graph.Towns.ContainsKey(origin) || !graph.Towns.ContainsKey(dest)) return found;
+            Town originTown = graph.Towns[origin];
+
             // Stop condition
             Func<int, int, int, bool> breakFunc = _breakFunc[option];
             // Break condition
             Func<int, int, int, bool> acceptFunc = _acceptFunc[option];
-            if (originTown == null || destDest == null) return found;
+
             Queue<MetaTown> queue = new Queue<MetaTown>();
             queue.Enqueue(new MetaTown(originTown, 0));
 
@@ -66,7 +73,7 @@ namespace Trains.Models
                     {
                         var child = route.Destination;
 
-                        if (child == destDest && acceptFunc(currentStops, totalDistance + route.Distance, limit))
+                        if (_comparer.Equals(child.Name, dest) && acceptFunc(currentStops, totalDistance + route.Distance, limit))
                         {
                             found.Add(string.Format("{0}{1}", crumb, child.Name));
                         }
@@ -95,6 +102,69 @@ namespace Trains.Models
         }
 
         /// <summary>
+        /// Find all shortest paths from a origin to dest
+        /// </summary>
+        /// <param name="graph"></param>
+        /// <param name="origin"></param>
+        /// <param name="dest"></param>
+        /// <returns></returns>
+        public Tuple<string, int> ShortestPath(IGraph graph, string origin, string dest)
+        {
+            Town originTown = graph.Towns[origin];
+            List<Tuple<string, string, int>> distances = new List<Tuple<string, string, int>>();
+            List<ShortTown> bag = new List<ShortTown>();
+            foreach (var town in graph.Towns.Values)
+            {
+                bag.Add(new ShortTown(town, null, int.MaxValue));
+            }
+
+            ShortTown initial = bag.Find(t => _comparer.Equals(t.TownData.Name, originTown.Name));
+            initial.Distance = 0;
+
+            while (bag.Count > 0)
+            {
+                // min distance
+                ShortTown current = bag.OrderBy(t => t.Distance).FirstOrDefault();
+
+                bag.Remove(current);
+                var tuple = Tuple.Create(current.TownData.Name, current.Previous?.Name, current.Distance);
+                distances.Add(tuple);
+                if (_comparer.Equals(current.TownData.Name, dest))
+                {
+                    StringBuilder path = new StringBuilder();
+                    string previous = tuple.Item2;
+                    int dist = tuple.Item3;
+                    while (!string.IsNullOrWhiteSpace(previous))
+                    {
+                        path.Insert(0, tuple.Item1);
+                        tuple = distances.Find(t => _comparer.Equals(t.Item1, previous));
+                        previous = tuple.Item2;
+                    }
+                    path.Insert(0, tuple.Item1);
+                    return Tuple.Create(path.ToString(), dist);
+                }
+
+                var routes = current.TownData.Routes;
+
+                foreach (var route in routes.Values)
+                {
+                    var target = bag.FirstOrDefault(t => _comparer.Equals(t.TownData.Name, route.Destination.Name));
+                    // not visited yet
+                    if (target != null)
+                    {
+                        int currentDistance = current.Distance + route.Distance;
+                        if (currentDistance < target.Distance)
+                        {
+                            target.Distance = currentDistance;
+                            target.Previous = current.TownData;
+                        }
+                    }
+                }
+            }
+            return Tuple.Create("", 0);
+        }
+
+        /// <summary>
         /// Return shortest path distance between 2 towns
         /// </summary>
         /// <param name="origin"></param>
@@ -102,29 +172,27 @@ namespace Trains.Models
         /// <returns></returns>
         public int ShortestPathDistance(IGraph graph, string origin, string dest)
         {
-            Town destTown = graph.Towns[dest];
-            var distances = ShortestPaths(graph, origin);
-            var distance = distances.FirstOrDefault(s => s.Item1.Name == destTown.Name);
-            return distance.Item3;
+            var distance = ShortestPath(graph, origin, dest);
+            return distance.Item2;
         }
 
         /// <summary>
         /// Find all shortest paths from a origin
         /// </summary>
+        /// <param name="graph"></param>
         /// <param name="origin"></param>
         /// <returns></returns>
-        public IList<Tuple<Town, Town, int>> ShortestPaths(IGraph graph, string origin)
+        public IList<Tuple<string, string, int>> ShortestPaths(IGraph graph, string origin)
         {
             Town originTown = graph.Towns[origin];
-            List<Tuple<Town, Town, int>> distances = new List<Tuple<Town, Town, int>>();
+            List<Tuple<string, string, int>> distances = new List<Tuple<string, string, int>>();
             List<ShortTown> bag = new List<ShortTown>();
             foreach (var town in graph.Towns.Values)
             {
                 bag.Add(new ShortTown(town, null, int.MaxValue));
             }
 
-            var initial = bag.Find(t => t.TownData.Name == originTown.Name);
-            initial.Previous = originTown;
+            var initial = bag.Find(t => _comparer.Equals(t.TownData.Name, originTown.Name));
             initial.Distance = 0;
 
             while (bag.Count > 0)
@@ -132,12 +200,12 @@ namespace Trains.Models
                 // min distance
                 var current = bag.OrderBy(t => t.Distance).FirstOrDefault();
                 bag.Remove(current);
-                distances.Add(Tuple.Create(current.TownData, current.Previous, current.Distance));
+                distances.Add(Tuple.Create(current.TownData.Name, current.Previous.Name, current.Distance));
                 var routes = current.TownData.Routes;
 
                 foreach (var route in routes.Values)
                 {
-                    var target = bag.FirstOrDefault(t => t.TownData.Name == route.Destination.Name);
+                    var target = bag.FirstOrDefault(t => _comparer.Equals(t.TownData.Name, route.Destination.Name));
                     // not visited yet
                     if (target != null)
                     {
@@ -172,51 +240,6 @@ namespace Trains.Models
                 previous = route.Destination;
             }
             return total;
-        }
-
-        /// <summary>
-        /// Find all shortest paths from a origin
-        /// </summary>
-        /// <param name="origin"></param>
-        /// <returns></returns>
-        protected IList<Tuple<Town, Town, int>> ShortestPaths(IGraph graph, string origin, string dest)
-        {
-            Town originTown = graph.Towns[origin];
-            List<Tuple<Town, Town, int>> distances = new List<Tuple<Town, Town, int>>();
-            List<ShortTown> bag = new List<ShortTown>();
-            foreach (var town in graph.Towns.Values)
-            {
-                bag.Add(new ShortTown(town, null, int.MaxValue));
-            }
-
-            var initial = bag.Find(t => t.TownData.Name == originTown.Name);
-            initial.Previous = originTown;
-            initial.Distance = 0;
-
-            while (bag.Count > 0)
-            {
-                // min distance
-                var current = bag.OrderBy(t => t.Distance).FirstOrDefault();
-                bag.Remove(current);
-                distances.Add(Tuple.Create(current.TownData, current.Previous, current.Distance));
-                var routes = current.TownData.Routes;
-
-                foreach (var route in routes.Values)
-                {
-                    var target = bag.FirstOrDefault(t => t.TownData.Name == route.Destination.Name);
-                    // not visited yet
-                    if (target != null)
-                    {
-                        int currentDistance = current.Distance + route.Distance;
-                        if (currentDistance < target.Distance)
-                        {
-                            target.Distance = currentDistance;
-                            target.Previous = current.TownData;
-                        }
-                    }
-                }
-            }
-            return distances;
         }
 
         #region Private
@@ -300,6 +323,5 @@ namespace Trains.Models
         }
 
         #endregion Private
-
     }
 }

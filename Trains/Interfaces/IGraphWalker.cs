@@ -6,7 +6,7 @@ using Trains.Models;
 namespace Trains.Interfaces
 {
     /// <summary>
-    /// Queriable graph
+    /// Graph walker
     /// </summary>
     public interface IGraphWalker
     {
@@ -38,6 +38,8 @@ namespace Trains.Interfaces
         /// <returns></returns>
         int ShortestPathDistance(IGraph graph, string origin, string dest);
 
-        IList<Tuple<Town, Town, int>> ShortestPaths(IGraph graph, string origin);
+        IList<Tuple<string, string, int>> ShortestPaths(IGraph graph, string origin);
+
+        Tuple<string, int> ShortestPath(IGraph graph, string origin, string dest);
     }
 }
