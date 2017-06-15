@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Trains.Interfaces;
 using System.Linq;
+using Trains.Interfaces;
 
 namespace Trains.Models
 {
@@ -29,27 +28,6 @@ namespace Trains.Models
             _acceptFunc.Add(PathOption.StopMax, StopMax);
             _acceptFunc.Add(PathOption.StopMaxEqual, StopMaxEqual);
             _acceptFunc.Add(PathOption.StopEqual, StopEqual);
-        }
-
-        /// <summary>
-        /// Total route distance
-        /// </summary>
-        /// <param name="graph"></param>
-        /// <param name="names"></param>
-        /// <returns></returns>
-        public int TotalRouteDistance(IGraph graph, params string[] names)
-        {
-            if (names == null || names.Length < 2) return -1;
-            if (!graph.Towns.TryGetValue(names[0], out Town previous)) return -1;
-            int total = 0;
-            for (int i = 1; i < names.Length; i++)
-            {
-                var current = names[i];
-                if (!previous.Routes.TryGetValue(current, out Route route)) return -1;
-                total += route.Distance;
-                previous = route.Destination;
-            }
-            return total;
         }
 
         /// <summary>
@@ -106,12 +84,11 @@ namespace Trains.Models
         /// <returns></returns>
         public IList<Town> FindTowns(IGraph graph, params string[] names)
         {
-            if (names == null) return new List<Town>();
             var towns = new List<Town>();
+            if (names == null || names.Length == 0) return towns;
             foreach (var name in names)
             {
-                var town = graph.Towns[name];
-                if (town == null) return new List<Town>();
+                if (!graph.Towns.TryGetValue(name, out Town town)) return new List<Town>();
                 towns.Add(town);
             }
             return towns;
@@ -126,12 +103,10 @@ namespace Trains.Models
         public int ShortestPathDistance(IGraph graph, string origin, string dest)
         {
             Town destTown = graph.Towns[dest];
-            var distances = ShortestPaths(graph,origin);
+            var distances = ShortestPaths(graph, origin);
             var distance = distances.FirstOrDefault(s => s.Item1.Name == destTown.Name);
             return distance.Item3;
         }
-
-
 
         /// <summary>
         /// Find all shortest paths from a origin
@@ -176,6 +151,27 @@ namespace Trains.Models
                 }
             }
             return distances;
+        }
+
+        /// <summary>
+        /// Total route distance
+        /// </summary>
+        /// <param name="graph"></param>
+        /// <param name="names"></param>
+        /// <returns></returns>
+        public int TotalRouteDistance(IGraph graph, params string[] names)
+        {
+            if (names == null || names.Length < 2) return -1;
+            if (!graph.Towns.TryGetValue(names[0], out Town previous)) return -1;
+            int total = 0;
+            for (int i = 1; i < names.Length; i++)
+            {
+                var current = names[i];
+                if (!previous.Routes.TryGetValue(current, out Route route)) return -1;
+                total += route.Distance;
+                previous = route.Destination;
+            }
+            return total;
         }
 
         /// <summary>
@@ -302,6 +298,8 @@ namespace Trains.Models
             if (stop <= limit) return true;
             return false;
         }
-        #endregion  
+
+        #endregion Private
+
     }
 }
