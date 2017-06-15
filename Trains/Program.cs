@@ -10,11 +10,13 @@ namespace Trains
     {
         private static IGraphParser<string,IGraph> _parser;
         private static IGraphFactory _factory;
+        private static IGraphWalker _graphWalker;
         // Composition root
         private static void Init()
         {
             _factory = new GraphFactory();
             _parser = new GraphParser(_factory);
+            _graphWalker = new GraphWalker();
         }
 
         static void Main(string[] args)
@@ -37,57 +39,54 @@ namespace Trains
                 graph = _parser.Parse(line);
             }
 
-            // Query graph
-            IGraphQuery graphQuery = _factory.RetrieveGraph(graph);
-
             // Q1
-            CheckDistance(graphQuery, 1, "A-B-C");
+            CheckDistance(graph, 1, "A-B-C");
 
             // Q2
-            CheckDistance(graphQuery, 2, "A-D");
+            CheckDistance(graph, 2, "A-D");
 
             // Q3
-            CheckDistance(graphQuery, 3, "A-D-C");
+            CheckDistance(graph, 3, "A-D-C");
 
             // Q4
-            CheckDistance(graphQuery, 4, "A-E-B-C-D");
+            CheckDistance(graph, 4, "A-E-B-C-D");
 
             // Q5
-            CheckDistance(graphQuery, 5, "A-E-D");
+            CheckDistance(graph, 5, "A-E-D");
 
             // Q6
-            FindPaths(graphQuery, 6, "C", "C", 3, PathOption.StopMax);
+            FindPaths(graph, 6, "C", "C", 3, PathOption.StopMax);
 
             // Q7
-            FindPaths(graphQuery, 7, "A", "C", 4, PathOption.StopEqual);
+            FindPaths(graph, 7, "A", "C", 4, PathOption.StopEqual);
 
             // Q8
-            ShortestPathDistance(graphQuery, 8, "A", "C");
+            ShortestPathDistance(graph, 8, "A", "C");
 
             // Q9
-            ShortestPathDistance(graphQuery, 9, "B", "B");
+            ShortestPathDistance(graph, 9, "B", "B");
 
             //Q10
-            FindPaths(graphQuery, 10, "C", "C",30,PathOption.DistanceMax);
+            FindPaths(graph, 10, "C", "C",30,PathOption.DistanceMax);
 
             Console.ReadLine();
         }
 
-        private static void CheckDistance(IGraphQuery graph, int number, string route)
+        private static void CheckDistance(IGraph graph, int number, string route)
         {
-            var q = graph.TotalRouteDistance(Helper.ExtractNames(route));
+            var q = _graphWalker.TotalRouteDistance(graph, Helper.ExtractNames(route));
             Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
         }
 
-        private static void FindPaths(IGraphQuery graph, int number, string origin, string dest, int maxStops, PathOption option)
+        private static void FindPaths(IGraph graph, int number, string origin, string dest, int maxStops, PathOption option)
         {
-            var r = graph.FindPaths(origin, dest, maxStops, option);
+            var r = _graphWalker.FindPaths(graph, origin, dest, maxStops, option);
             Console.WriteLine("Output #{0}:{1}", number, r.Count);
         }
 
-        private static void ShortestPathDistance(IGraphQuery graph,int number, string origin, string dest)
+        private static void ShortestPathDistance(IGraph graph,int number, string origin, string dest)
         {
-            var d = graph.ShortestPathDistance(origin,dest);
+            var d = _graphWalker.ShortestPathDistance(graph, origin, dest);
             Console.WriteLine("Output #{0}:{1}", number, d);
         }
     }

@@ -22,9 +22,9 @@ namespace Trains.Services
         /// </summary>
         /// <param name="graph"></param>
         /// <returns></returns>
-        public IGraphQuery RetrieveGraph(IGraph graph)
+        public IGraphWalker RetrieveGraph(IGraph graph)
         {
-            return (IGraphQuery)graph;
+            return (IGraphWalker)graph;
         }
     }
 }

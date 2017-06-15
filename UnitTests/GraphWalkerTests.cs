@@ -4,14 +4,15 @@ using Xunit;
 
 namespace UnitTests
 {
-    public class GraphQueryTests
+    public class GraphWalkerTests
     {
-        private const string _category = "GraphQuery";
-        private IGraphQuery _target;
+        private const string _category = "GraphWalker";
+        private IGraphWalker _target = new GraphWalker();
+        private IGraph _graph;
 
-        public GraphQueryTests()
+        public GraphWalkerTests()
         {
-            _target = BuildGraph();
+            _graph = BuildGraph();
         }
 
         [Fact]
@@ -19,7 +20,7 @@ namespace UnitTests
         public void FindPathsDistanceEqualTest()
         {
             // Act
-            var output = _target.FindPaths("A", "B", 5, PathOption.DistanceEqual);
+            var output = _target.FindPaths(_graph,"A", "B", 5, PathOption.DistanceEqual);
 
             // Assert
             Assert.NotEmpty(output);
@@ -31,7 +32,7 @@ namespace UnitTests
         public void FindPathsDistanceMaxEqualTest()
         {
             // Act
-            var output = _target.FindPaths("A", "B", 5, PathOption.DistanceMaxEqual);
+            var output = _target.FindPaths(_graph, "A", "B", 5, PathOption.DistanceMaxEqual);
 
             // Assert
             Assert.NotEmpty(output);
@@ -43,7 +44,7 @@ namespace UnitTests
         public void FindPathsDistanceMaxTest()
         {
             // Act
-            var output = _target.FindPaths("A", "B", 5, PathOption.DistanceMax);
+            var output = _target.FindPaths(_graph, "A", "B", 5, PathOption.DistanceMax);
 
             // Assert
             Assert.NotEmpty(output);
@@ -55,7 +56,7 @@ namespace UnitTests
         public void FindPathsStopEqualTest()
         {
             // Act
-            var output = _target.FindPaths("A", "B", 3, PathOption.StopEqual);
+            var output = _target.FindPaths(_graph, "A", "B", 3, PathOption.StopEqual);
 
             // Assert
             Assert.NotEmpty(output);
@@ -67,7 +68,7 @@ namespace UnitTests
         public void FindPathsStopMaxEqualTest()
         {
             // Act
-            var output = _target.FindPaths("A", "B", 3, PathOption.StopMaxEqual);
+            var output = _target.FindPaths(_graph, "A", "B", 3, PathOption.StopMaxEqual);
 
             // Assert
             Assert.NotEmpty(output);
@@ -79,7 +80,7 @@ namespace UnitTests
         public void FindPathsStopMaxTest()
         {
             // Act
-            var output = _target.FindPaths("A", "B", 3, PathOption.StopMax);
+            var output = _target.FindPaths(_graph, "A", "B", 3, PathOption.StopMax);
 
             // Assert
             Assert.NotEmpty(output);
@@ -91,7 +92,7 @@ namespace UnitTests
         public void ShortestPathDistanceTest()
         {
             // Act
-            var output = _target.ShortestPathDistance("A", "B");
+            var output = _target.ShortestPathDistance(_graph, "A", "B");
 
             // Assert
             Assert.Equal<int>(3, output);
@@ -102,7 +103,7 @@ namespace UnitTests
         public void TotalRouteDistance2StopsTest()
         {
             // Act
-            var output = _target.TotalRouteDistance("A", "B", "C");
+            var output = _target.TotalRouteDistance(_graph, "A", "B", "C");
 
             // Assert
             Assert.Equal<int>(8, output);
@@ -113,7 +114,7 @@ namespace UnitTests
         public void TotalRouteDistanceTest()
         {
             // Act
-            var output = _target.TotalRouteDistance("A", "B");
+            var output = _target.TotalRouteDistance(_graph, "A", "B");
 
             // Assert
             Assert.Equal<int>(5, output);
@@ -124,13 +125,13 @@ namespace UnitTests
         public void TotalRouteDistanceErrorTest()
         {
             // Act
-            var output = _target.TotalRouteDistance("A", "X");
+            var output = _target.TotalRouteDistance(_graph, "A", "X");
 
             // Assert
             Assert.Equal<int>(-1, output);
         }
 
-        private IGraphQuery BuildGraph()
+        private IGraph BuildGraph()
         {
             var graph = new Graph();
             graph.AddRoute("A", "B", 5);

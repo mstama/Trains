@@ -11,20 +11,6 @@ namespace UnitTests
 
         [Fact]
         [Trait("Category", _category)]
-        public void CreateGraphQueryTest()
-        {
-            // Arrange
-            var graph = _target.CreateGraph();
-
-            // Act
-            var output = _target.RetrieveGraph(graph);
-
-            // Assert
-            Assert.IsAssignableFrom<IGraphQuery>(output);
-        }
-
-        [Fact]
-        [Trait("Category", _category)]
         public void CreateGraphTest()
         {
             // Act
