@@ -1,4 +1,7 @@
-﻿namespace Trains.Models
+﻿using System;
+using System.Text;
+
+namespace Trains.Models
 {
     public partial class GraphWalker
     {
@@ -7,27 +10,25 @@
         /// </summary>
         private class MetaTown
         {
-            public string Breadcrumb { get; }
-
             public Town Data { get; }
+
+            public int Distance { get; }
 
             public int Stops { get; }
 
-            public int TotalDistance { get; }
+            protected MetaTown Previous { get; }
 
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="town"></param>
-            /// <param name="stops"></param>
-            /// <param name="breadcrumb"></param>
-            /// <param name="distance"></param>
-            public MetaTown(Town town, int stops, string breadcrumb, int distance)
+            /// <param name="route"></param>
+            /// <param name="previous"></param>
+            public MetaTown(Route route, MetaTown previous)
             {
-                Data = town;
-                Stops = stops;
-                Breadcrumb = string.Format("{0}{1}", breadcrumb, town.Name);
-                TotalDistance = distance;
+                Data = route.Destination;
+                Stops = previous.Stops + 1;
+                Previous = previous;
+                Distance = previous.Distance + route.Distance;
             }
 
             /// <summary>
@@ -39,8 +40,19 @@
             {
                 Data = town;
                 Stops = stops;
-                Breadcrumb = town.Name;
-                TotalDistance = 0;
+                Distance = 0;
+            }
+
+            public string Breadcrumb()
+            {
+                StringBuilder bread = new StringBuilder();
+                MetaTown current = this;
+                while (current != null)
+                {
+                    bread.Insert(0, current.Data.Name);
+                    current = current.Previous;
+                }
+                return bread.ToString();
             }
         }
     }

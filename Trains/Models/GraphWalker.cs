@@ -47,8 +47,8 @@ namespace Trains.Models
         public IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, PathOption option)
         {
             List<string> found = new List<string>();
-            if (!graph.Towns.ContainsKey(origin) || !graph.Towns.ContainsKey(dest)) return found;
-            Town originTown = graph.Towns[origin];
+            if (!graph.Towns.ContainsKey(dest)) return found;
+            if (!graph.Towns.TryGetValue(origin, out Town originTown)) return found;
 
             // Stop condition
             Func<int, int, int, bool> breakFunc = _breakFunc[option];
@@ -60,45 +60,22 @@ namespace Trains.Models
 
             while (queue.Count > 0)
             {
-                var meta = queue.Dequeue();
-                var current = meta.Data;
-                // Process current
-                int currentStops = meta.Stops;
-                string crumb = meta.Breadcrumb;
-                int totalDistance = meta.TotalDistance;
-                currentStops++;
-                if (breakFunc(currentStops, totalDistance, limit))
+                var previousMeta = queue.Dequeue();
+                var previous = previousMeta.Data;
+                foreach (var route in previous.Routes.Values)
                 {
-                    foreach (var route in current.Routes.Values)
+                    var meta = new MetaTown(route, previousMeta);
+                    if (_comparer.Equals(meta.Data.Name, dest) && acceptFunc(meta.Stops, meta.Distance, limit))
                     {
-                        var child = route.Destination;
-
-                        if (_comparer.Equals(child.Name, dest) && acceptFunc(currentStops, totalDistance + route.Distance, limit))
-                        {
-                            found.Add(string.Format("{0}{1}", crumb, child.Name));
-                        }
-                        queue.Enqueue(new MetaTown(child, currentStops, crumb, totalDistance + route.Distance));
+                        found.Add(meta.Breadcrumb());
+                    }
+                    if (breakFunc(meta.Stops, meta.Distance, limit))
+                    {
+                        queue.Enqueue(meta);
                     }
                 }
             }
             return found;
-        }
-
-        /// <summary>
-        /// Return towns given a set of names
-        /// </summary>
-        /// <param name="names"></param>
-        /// <returns></returns>
-        public IList<Town> FindTowns(IGraph graph, params string[] names)
-        {
-            var towns = new List<Town>();
-            if (names == null || names.Length == 0) return towns;
-            foreach (var name in names)
-            {
-                if (!graph.Towns.TryGetValue(name, out Town town)) return new List<Town>();
-                towns.Add(town);
-            }
-            return towns;
         }
 
         /// <summary>
