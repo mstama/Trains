@@ -6,11 +6,24 @@ using Trains.Services;
 
 namespace Trains
 {
-    class Program
+    internal class Program
     {
-        private static IGraphParser<string,IGraph> _parser;
         private static IGraphFactory _factory;
         private static IGraphWalker _graphWalker;
+        private static IGraphParser<string, IGraph> _parser;
+
+        private static void CheckDistance(IGraph graph, int number, string route)
+        {
+            var q = _graphWalker.TotalRouteDistance(graph, Helper.ExtractNames(route));
+            Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
+        }
+
+        private static void FindPaths(IGraph graph, int number, string origin, string dest, int maxStops, PathOption option)
+        {
+            var r = _graphWalker.FindPaths(graph, origin, dest, maxStops, option);
+            Console.WriteLine("Output #{0}:{1}", number, r.Count);
+        }
+
         // Composition root
         private static void Init()
         {
@@ -19,7 +32,7 @@ namespace Trains
             _graphWalker = new GraphWalker();
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Init();
 
@@ -55,7 +68,7 @@ namespace Trains
             CheckDistance(graph, 5, "A-E-D");
 
             // Q6
-            FindPaths(graph, 6, "C", "C", 3, PathOption.StopMax);
+            FindPaths(graph, 6, "C", "C", 3, PathOption.StopMaxEqual);
 
             // Q7
             FindPaths(graph, 7, "A", "C", 4, PathOption.StopEqual);
@@ -64,30 +77,34 @@ namespace Trains
             ShortestPathDistance(graph, 8, "A", "C");
 
             // Q9
-            ShortestPathDistance(graph, 9, "B", "B");
+            ShortestPathDistanceRT(graph, 9, "B", "B");
 
             //Q10
-            FindPaths(graph, 10, "C", "C",30,PathOption.DistanceMax);
+            FindPaths(graph, 10, "C", "C", 30, PathOption.DistanceMaxEqual);
 
             Console.ReadLine();
         }
 
-        private static void CheckDistance(IGraph graph, int number, string route)
-        {
-            var q = _graphWalker.TotalRouteDistance(graph, Helper.ExtractNames(route));
-            Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
-        }
-
-        private static void FindPaths(IGraph graph, int number, string origin, string dest, int maxStops, PathOption option)
-        {
-            var r = _graphWalker.FindPaths(graph, origin, dest, maxStops, option);
-            Console.WriteLine("Output #{0}:{1}", number, r.Count);
-        }
-
-        private static void ShortestPathDistance(IGraph graph,int number, string origin, string dest)
+        private static void ShortestPathDistance(IGraph graph, int number, string origin, string dest)
         {
             var d = _graphWalker.ShortestPathDistance(graph, origin, dest);
             Console.WriteLine("Output #{0}:{1}", number, d);
+        }
+
+        private static void ShortestPathDistanceRT(IGraph graph, int number, string origin, string dest)
+        {
+            var distances = _graphWalker.ShortestPaths(graph, origin);
+            int min = int.MaxValue;
+            foreach (var distance in distances)
+            {
+                int returnDist = _graphWalker.ShortestPathDistance(graph, distance.Item1, origin);
+                int roundTrip = distance.Item3 + returnDist;
+                if (roundTrip > 0 && roundTrip < min)
+                {
+                    min = roundTrip;
+                }
+            }
+            Console.WriteLine("Output #{0}:{1}", number, min);
         }
     }
 }

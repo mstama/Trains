@@ -37,7 +37,7 @@ namespace Trains.Models
         }
 
         /// <summary>
-        /// Find all paths between 2 towns
+        /// Find all paths between 2 towns (Dijkstra)
         /// </summary>
         /// <param name="origin"></param>
         /// <param name="dest"></param>
@@ -81,6 +81,7 @@ namespace Trains.Models
         /// <summary>
         /// Find all shortest paths from a origin to dest
         /// </summary>
+        /// <remarks>Origin and dest can not be the same</remarks>
         /// <param name="graph"></param>
         /// <param name="origin"></param>
         /// <param name="dest"></param>
@@ -106,6 +107,7 @@ namespace Trains.Models
                 bag.Remove(current);
                 var tuple = Tuple.Create(current.Data.Name, current.Previous?.Name, current.Distance);
                 distances.Add(tuple);
+                // Exits when find dest
                 if (_comparer.Equals(current.Data.Name, dest))
                 {
                     StringBuilder path = new StringBuilder();
@@ -130,6 +132,8 @@ namespace Trains.Models
                     if (target != null)
                     {
                         int currentDistance = current.Distance + route.Distance;
+
+                        // Updates distance in bag
                         if (currentDistance < target.Distance)
                         {
                             target.Distance = currentDistance;
@@ -177,7 +181,7 @@ namespace Trains.Models
                 // min distance
                 var current = bag.OrderBy(t => t.Distance).FirstOrDefault();
                 bag.Remove(current);
-                distances.Add(Tuple.Create(current.Data.Name, current.Previous.Name, current.Distance));
+                distances.Add(Tuple.Create(current.Data.Name, current.Previous?.Name, current.Distance));
                 var routes = current.Data.Routes;
 
                 foreach (var route in routes.Values)
