@@ -9,7 +9,7 @@ namespace Trains.Models
     /// <summary>
     /// Graph walker
     /// </summary>
-    public class GraphWalker : IGraphWalker
+    public partial class GraphWalker : IGraphWalker
     {
         private static Dictionary<PathOption, Func<int, int, int, bool>> _acceptFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
 
