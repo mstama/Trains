@@ -61,7 +61,7 @@ namespace Trains.Models
             while (queue.Count > 0)
             {
                 var meta = queue.Dequeue();
-                var current = meta.TownData;
+                var current = meta.Data;
                 // Process current
                 int currentStops = meta.Stops;
                 string crumb = meta.Breadcrumb;
@@ -118,7 +118,7 @@ namespace Trains.Models
                 bag.Add(new ShortTown(town, null, int.MaxValue));
             }
 
-            ShortTown initial = bag.Find(t => _comparer.Equals(t.TownData.Name, originTown.Name));
+            ShortTown initial = bag.Find(t => _comparer.Equals(t.Data.Name, originTown.Name));
             initial.Distance = 0;
 
             while (bag.Count > 0)
@@ -127,9 +127,9 @@ namespace Trains.Models
                 ShortTown current = bag.OrderBy(t => t.Distance).FirstOrDefault();
 
                 bag.Remove(current);
-                var tuple = Tuple.Create(current.TownData.Name, current.Previous?.Name, current.Distance);
+                var tuple = Tuple.Create(current.Data.Name, current.Previous?.Name, current.Distance);
                 distances.Add(tuple);
-                if (_comparer.Equals(current.TownData.Name, dest))
+                if (_comparer.Equals(current.Data.Name, dest))
                 {
                     StringBuilder path = new StringBuilder();
                     string previous = tuple.Item2;
@@ -144,11 +144,11 @@ namespace Trains.Models
                     return Tuple.Create(path.ToString(), dist);
                 }
 
-                var routes = current.TownData.Routes;
+                var routes = current.Data.Routes;
 
                 foreach (var route in routes.Values)
                 {
-                    var target = bag.FirstOrDefault(t => _comparer.Equals(t.TownData.Name, route.Destination.Name));
+                    var target = bag.FirstOrDefault(t => _comparer.Equals(t.Data.Name, route.Destination.Name));
                     // not visited yet
                     if (target != null)
                     {
@@ -156,7 +156,7 @@ namespace Trains.Models
                         if (currentDistance < target.Distance)
                         {
                             target.Distance = currentDistance;
-                            target.Previous = current.TownData;
+                            target.Previous = current.Data;
                         }
                     }
                 }
@@ -192,7 +192,7 @@ namespace Trains.Models
                 bag.Add(new ShortTown(town, null, int.MaxValue));
             }
 
-            var initial = bag.Find(t => _comparer.Equals(t.TownData.Name, originTown.Name));
+            var initial = bag.Find(t => _comparer.Equals(t.Data.Name, originTown.Name));
             initial.Distance = 0;
 
             while (bag.Count > 0)
@@ -200,12 +200,12 @@ namespace Trains.Models
                 // min distance
                 var current = bag.OrderBy(t => t.Distance).FirstOrDefault();
                 bag.Remove(current);
-                distances.Add(Tuple.Create(current.TownData.Name, current.Previous.Name, current.Distance));
-                var routes = current.TownData.Routes;
+                distances.Add(Tuple.Create(current.Data.Name, current.Previous.Name, current.Distance));
+                var routes = current.Data.Routes;
 
                 foreach (var route in routes.Values)
                 {
-                    var target = bag.FirstOrDefault(t => _comparer.Equals(t.TownData.Name, route.Destination.Name));
+                    var target = bag.FirstOrDefault(t => _comparer.Equals(t.Data.Name, route.Destination.Name));
                     // not visited yet
                     if (target != null)
                     {
@@ -213,7 +213,7 @@ namespace Trains.Models
                         if (currentDistance < target.Distance)
                         {
                             target.Distance = currentDistance;
-                            target.Previous = current.TownData;
+                            target.Previous = current.Data;
                         }
                     }
                 }

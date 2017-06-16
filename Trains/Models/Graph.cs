@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Trains.Interfaces;
 
@@ -14,7 +13,7 @@ namespace Trains.Models
         /// <summary>
         /// Towns registered
         /// </summary>
-        public IDictionary<string,Town> Towns { get; } = new Dictionary<string,Town>(StringComparer.OrdinalIgnoreCase);
+        public IDictionary<string, Town> Towns { get; } = new Dictionary<string, Town>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Add or retrieve a route if exists
@@ -46,7 +45,7 @@ namespace Trains.Models
         {
             if (!Towns.TryGetValue(name, out Town town))
             {
-                town = new Town(this,name);
+                town = new Town(this, name);
             }
             return town;
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Trains.Models;
 
 namespace Trains.Interfaces
@@ -10,14 +9,6 @@ namespace Trains.Interfaces
     /// </summary>
     public interface IGraphWalker
     {
-        /// <summary>
-        /// Calculate route distance
-        /// </summary>
-        /// <param name="graph"></param>
-        /// <param name="names"></param>
-        /// <returns></returns>
-        int TotalRouteDistance(IGraph graph, params string[] names);
-
         /// <summary>
         /// Find all paths between 2 towns
         /// </summary>
@@ -30,6 +21,15 @@ namespace Trains.Interfaces
         IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, PathOption option);
 
         /// <summary>
+        /// Return the shortest path to a town from a given town
+        /// </summary>
+        /// <param name="graph"></param>
+        /// <param name="origin"></param>
+        /// <param name="dest"></param>
+        /// <returns>Tuple breadcrumb and distance</returns>
+        Tuple<string, int> ShortestPath(IGraph graph, string origin, string dest);
+
+        /// <summary>
         /// Find shortest path distance between 2 towns
         /// </summary>
         /// <param name="graph"></param>
@@ -38,8 +38,22 @@ namespace Trains.Interfaces
         /// <returns></returns>
         int ShortestPathDistance(IGraph graph, string origin, string dest);
 
+        /// <summary>
+        /// Return the shortest paths to all towns from a given town
+        /// </summary>
+        /// <param name="graph"></param>
+        /// <param name="origin"></param>
+        /// <returns>
+        /// List of tuples in the format (Town name, Previous Town name, distance from origin)
+        /// </returns>
         IList<Tuple<string, string, int>> ShortestPaths(IGraph graph, string origin);
 
-        Tuple<string, int> ShortestPath(IGraph graph, string origin, string dest);
+        /// <summary>
+        /// Calculate route distance
+        /// </summary>
+        /// <param name="graph"></param>
+        /// <param name="names"></param>
+        /// <returns></returns>
+        int TotalRouteDistance(IGraph graph, params string[] names);
     }
 }

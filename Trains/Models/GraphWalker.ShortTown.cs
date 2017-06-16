@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Trains.Models
+﻿namespace Trains.Models
 {
     public partial class GraphWalker
     {
@@ -11,12 +7,15 @@ namespace Trains.Models
         /// </summary>
         private class ShortTown
         {
-            public Town TownData { get; set; }
-            public Town Previous { get; set; }
+            public Town Data { get; }
+
             public int Distance { get; set; }
+
+            public Town Previous { get; set; }
+
             public ShortTown(Town dest, Town previous, int distance)
             {
-                TownData = dest;
+                Data = dest;
                 Previous = previous;
                 Distance = distance;
             }
