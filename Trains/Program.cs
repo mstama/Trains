@@ -80,7 +80,7 @@ namespace Trains
             ShortestPathDistanceRT(graph, 9, "B", "B");
 
             //Q10
-            FindPaths(graph, 10, "C", "C", 30, PathOption.DistanceMaxEqual);
+            FindPaths(graph, 10, "C", "C", 30, PathOption.DistanceMax);
 
             Console.ReadLine();
         }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Trains.Interfaces;
+using Trains.Models;
 
-namespace Trains.Models
+namespace Trains.Services
 {
     /// <summary>
     /// Graph walker

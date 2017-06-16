@@ -1,4 +1,6 @@
-﻿namespace Trains.Models
+﻿using Trains.Models;
+
+namespace Trains.Services
 {
     public partial class GraphWalker
     {

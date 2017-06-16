@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Text;
+using Trains.Models;
 
-namespace Trains.Models
+namespace Trains.Services
 {
     public partial class GraphWalker
     {

@@ -1,5 +1,6 @@
 ﻿using Trains.Interfaces;
 using Trains.Models;
+using Trains.Services;
 using Xunit;
 
 namespace UnitTests
@@ -7,8 +8,8 @@ namespace UnitTests
     public class GraphWalkerTests
     {
         private const string _category = "GraphWalker";
-        private IGraphWalker _target = new GraphWalker();
         private IGraph _graph;
+        private IGraphWalker _target = new GraphWalker();
 
         public GraphWalkerTests()
         {
@@ -20,7 +21,7 @@ namespace UnitTests
         public void FindPathsDistanceEqualTest()
         {
             // Act
-            var output = _target.FindPaths(_graph,"A", "B", 5, PathOption.DistanceEqual);
+            var output = _target.FindPaths(_graph, "A", "B", 5, PathOption.DistanceEqual);
 
             // Assert
             Assert.NotEmpty(output);
@@ -111,17 +112,6 @@ namespace UnitTests
 
         [Fact]
         [Trait("Category", _category)]
-        public void TotalRouteDistanceTest()
-        {
-            // Act
-            var output = _target.TotalRouteDistance(_graph, "A", "B");
-
-            // Assert
-            Assert.Equal<int>(5, output);
-        }
-
-        [Fact]
-        [Trait("Category", _category)]
         public void TotalRouteDistanceErrorTest()
         {
             // Act
@@ -129,6 +119,17 @@ namespace UnitTests
 
             // Assert
             Assert.Equal<int>(-1, output);
+        }
+
+        [Fact]
+        [Trait("Category", _category)]
+        public void TotalRouteDistanceTest()
+        {
+            // Act
+            var output = _target.TotalRouteDistance(_graph, "A", "B");
+
+            // Assert
+            Assert.Equal<int>(5, output);
         }
 
         private IGraph BuildGraph()
