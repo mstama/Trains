@@ -7,7 +7,7 @@ namespace Trains.Services
     /// </summary>
     public static class Helper
     {
-        private static char[] _separators = new char[] { ',', ' ', '-' };
+        private static char[] _separators = { ',', ' ', '-' };
 
         /// <summary>
         /// Separate names in a string array

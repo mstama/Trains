@@ -48,8 +48,8 @@ namespace Trains.Services
         public IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, PathOption option)
         {
             List<string> found = new List<string>();
-            if (!graph.Towns.ContainsKey(dest)) return found;
-            if (!graph.Towns.TryGetValue(origin, out Town originTown)) return found;
+            if (!graph.Towns.ContainsKey(dest)) { return found; }
+            if (!graph.Towns.TryGetValue(origin, out Town originTown)) { return found; }
 
             // Stop condition
             Func<int, int, int, bool> breakFunc = _breakFunc[option];
