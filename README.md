@@ -1,5 +1,9 @@
 # Trains
 
+Trains
+
+[![Build status](https://ci.appveyor.com/api/projects/status/mlp1dcqkymkkpd7w?svg=true)](https://ci.appveyor.com/project/mstama/trains)
+
 ### How to build
 
 * [Install](https://www.microsoft.com/net/download/core#/current) .NET Core 1.1 
