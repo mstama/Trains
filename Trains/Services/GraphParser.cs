@@ -8,8 +8,8 @@ namespace Trains.Services
     /// </summary>
     public class GraphParser : IGraphParser<string, IGraph>
     {
-        private static char[] _separator = new char[] { ',', ' ' };
-        private IGraphFactory _factory;
+        private static char[] _separator = { ',', ' ' };
+        private readonly IGraphFactory _factory;
 
         /// <summary>
         /// Constructor

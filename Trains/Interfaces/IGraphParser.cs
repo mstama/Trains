@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TTarget"></typeparam>
-    public interface IGraphParser<TSource, TTarget>
+    public interface IGraphParser<in TSource,out TTarget>
     {
         /// <summary>
         /// Parse

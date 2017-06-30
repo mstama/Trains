@@ -12,11 +12,11 @@ namespace Trains.Services
     /// </summary>
     public partial class GraphWalker : IGraphWalker
     {
-        private static Dictionary<PathOption, Func<int, int, int, bool>> _acceptFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
+        private static readonly Dictionary<PathOption, Func<int, int, int, bool>> _acceptFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
 
-        private static Dictionary<PathOption, Func<int, int, int, bool>> _breakFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
+        private static readonly Dictionary<PathOption, Func<int, int, int, bool>> _breakFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
 
-        private StringComparer _comparer = StringComparer.OrdinalIgnoreCase;
+        private static readonly StringComparer _comparer = StringComparer.OrdinalIgnoreCase;
 
         /// <summary>
         /// Static constructor
@@ -211,8 +211,8 @@ namespace Trains.Services
         /// <returns></returns>
         public int TotalRouteDistance(IGraph graph, params string[] names)
         {
-            if (names == null || names.Length < 2) return -1;
-            if (!graph.Towns.TryGetValue(names[0], out Town previous)) return -1;
+            if (names == null || names.Length < 2) { return -1; }
+            if (!graph.Towns.TryGetValue(names[0], out Town previous)) { return -1; }
             int total = 0;
             for (int i = 1; i < names.Length; i++)
             {
@@ -235,7 +235,7 @@ namespace Trains.Services
         /// <returns></returns>
         private static bool DistanceEqual(int stop, int distance, int limit)
         {
-            if (distance == limit) return true;
+            if (distance == limit) { return true; }
             return false;
         }
 
@@ -248,7 +248,7 @@ namespace Trains.Services
         /// <returns></returns>
         private static bool DistanceMax(int stop, int distance, int limit)
         {
-            if (distance < limit) return true;
+            if (distance < limit) { return true; }
             return false;
         }
 
@@ -261,7 +261,7 @@ namespace Trains.Services
         /// <returns></returns>
         private static bool DistanceMaxEqual(int stop, int distance, int limit)
         {
-            if (distance <= limit) return true;
+            if (distance <= limit) { return true; }
             return false;
         }
 
@@ -274,7 +274,7 @@ namespace Trains.Services
         /// <returns></returns>
         private static bool StopEqual(int stop, int distance, int limit)
         {
-            if (stop == limit) return true;
+            if (stop == limit) { return true; }
             return false;
         }
 
@@ -287,7 +287,7 @@ namespace Trains.Services
         /// <returns></returns>
         private static bool StopMax(int stop, int distance, int limit)
         {
-            if (stop < limit) return true;
+            if (stop < limit) { return true; }
             return false;
         }
 
@@ -300,7 +300,7 @@ namespace Trains.Services
         /// <returns></returns>
         private static bool StopMaxEqual(int stop, int distance, int limit)
         {
-            if (stop <= limit) return true;
+            if (stop <= limit) { return true; }
             return false;
         }
 

@@ -31,7 +31,7 @@ namespace Trains.Models
             }
             else
             {
-                if (route.Distance != distance) route.Distance = distance;
+                if (route.Distance != distance) { route.Distance = distance; }
             }
             return route;
         }
