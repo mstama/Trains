@@ -217,7 +217,7 @@ namespace Trains.Services
             for (int i = 1; i < names.Length; i++)
             {
                 var current = names[i];
-                if (!previous.Routes.TryGetValue(current, out Route route)) return -1;
+                if (!previous.Routes.TryGetValue(current, out Route route)) { return -1; }
                 total += route.Distance;
                 previous = route.Destination;
             }
