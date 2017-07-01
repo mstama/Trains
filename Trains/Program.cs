@@ -8,7 +8,6 @@ namespace Trains
 {
     internal class Program
     {
-        private static IGraphFactory _factory;
         private static IGraphWalker _graphWalker;
         private static IGraphParser<string, IGraph> _parser;
 
@@ -27,8 +26,7 @@ namespace Trains
         // Composition root
         private static void Init()
         {
-            _factory = new GraphFactory();
-            _parser = new GraphParser(_factory);
+            _parser = new GraphParser(new GraphFactory());
             _graphWalker = new GraphWalker();
         }
 
@@ -43,7 +41,7 @@ namespace Trains
             }
             // Build graph
             string filePath = args[0];
-            if (!File.Exists(filePath)) Console.WriteLine("File does not exist!");
+            if (!File.Exists(filePath)) { Console.WriteLine("File does not exist!"); }
             Console.WriteLine("Processing file {0}.", args[0]);
             var lines = File.ReadLines(filePath);
             IGraph graph = null;
@@ -77,7 +75,7 @@ namespace Trains
             ShortestPathDistance(graph, 8, "A", "C");
 
             // Q9
-            ShortestPathDistanceRT(graph, 9, "B", "B");
+            ShortestPathDistanceRoundTrip(graph, 9, "B");
 
             //Q10
             FindPaths(graph, 10, "C", "C", 30, PathOption.DistanceMax);
@@ -91,7 +89,7 @@ namespace Trains
             Console.WriteLine("Output #{0}:{1}", number, d);
         }
 
-        private static void ShortestPathDistanceRT(IGraph graph, int number, string origin, string dest)
+        private static void ShortestPathDistanceRoundTrip(IGraph graph, int number, string origin)
         {
             var distances = _graphWalker.ShortestPaths(graph, origin);
             int min = int.MaxValue;
