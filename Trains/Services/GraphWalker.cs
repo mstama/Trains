@@ -12,30 +12,7 @@ namespace Trains.Services
     /// </summary>
     public partial class GraphWalker : IGraphWalker
     {
-        private static readonly Dictionary<PathOption, Func<int, int, int, bool>> _acceptFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
-
-        private static readonly Dictionary<PathOption, Func<int, int, int, bool>> _breakFunc = new Dictionary<PathOption, Func<int, int, int, bool>>();
-
         private static readonly StringComparer _comparer = StringComparer.OrdinalIgnoreCase;
-
-        /// <summary>
-        /// Static constructor
-        /// </summary>
-        static GraphWalker()
-        {
-            _breakFunc.Add(PathOption.DistanceMax, DistanceMaxEqual);
-            _breakFunc.Add(PathOption.DistanceMaxEqual, DistanceMaxEqual);
-            _breakFunc.Add(PathOption.DistanceEqual, DistanceMaxEqual);
-            _breakFunc.Add(PathOption.StopMax, StopMaxEqual);
-            _breakFunc.Add(PathOption.StopMaxEqual, StopMaxEqual);
-            _breakFunc.Add(PathOption.StopEqual, StopMaxEqual);
-            _acceptFunc.Add(PathOption.DistanceMax, DistanceMax);
-            _acceptFunc.Add(PathOption.DistanceMaxEqual, DistanceMaxEqual);
-            _acceptFunc.Add(PathOption.DistanceEqual, DistanceEqual);
-            _acceptFunc.Add(PathOption.StopMax, StopMax);
-            _acceptFunc.Add(PathOption.StopMaxEqual, StopMaxEqual);
-            _acceptFunc.Add(PathOption.StopEqual, StopEqual);
-        }
 
         /// <summary>
         /// Find all paths between 2 towns (Dijkstra)
@@ -45,16 +22,16 @@ namespace Trains.Services
         /// <param name="limit"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, PathOption option)
+        public IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, EvalOption option)
         {
             List<string> found = new List<string>();
             if (!graph.Towns.ContainsKey(dest)) { return found; }
             if (!graph.Towns.TryGetValue(origin, out Town originTown)) { return found; }
 
             // Stop condition
-            Func<int, int, int, bool> breakFunc = _breakFunc[option];
+            Func<int, int, int, bool> breakFunc = StopOrDistanceSelection(option,BreakSelection(option));
             // Break condition
-            Func<int, int, int, bool> acceptFunc = _acceptFunc[option];
+            Func<int, int, int, bool> acceptFunc = StopOrDistanceSelection(option, AcceptSelection(option));
 
             Queue<MetaTown> queue = new Queue<MetaTown>();
             queue.Enqueue(new MetaTown(originTown, 0));
@@ -227,81 +204,83 @@ namespace Trains.Services
         #region Private
 
         /// <summary>
-        /// Distance equal limit
+        /// # equal limit
         /// </summary>
-        /// <param name="stop"></param>
-        /// <param name="distance"></param>
+        /// <param name="value"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        private static bool DistanceEqual(int stop, int distance, int limit)
+        private static bool Equal(int value, int limit)
         {
-            if (distance == limit) { return true; }
-            return false;
+            return value==limit;
         }
 
         /// <summary>
-        /// Distance less than limit
+        /// # less than limit
         /// </summary>
-        /// <param name="stop"></param>
-        /// <param name="distance"></param>
+        /// <param name="value"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        private static bool DistanceMax(int stop, int distance, int limit)
+        private static bool Max(int value, int limit)
         {
-            if (distance < limit) { return true; }
-            return false;
+            return value < limit;
         }
 
         /// <summary>
-        /// Distance less or equal limit
+        /// # less or equal than limit
         /// </summary>
-        /// <param name="stop"></param>
-        /// <param name="distance"></param>
+        /// <param name="value"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        private static bool DistanceMaxEqual(int stop, int distance, int limit)
+        private static bool MaxEqual(int value, int limit)
         {
-            if (distance <= limit) { return true; }
-            return false;
+            return value <= limit;
         }
 
-        /// <summary>
-        /// # Stops equal limit
-        /// </summary>
-        /// <param name="stop"></param>
-        /// <param name="distance"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        private static bool StopEqual(int stop, int distance, int limit)
+        private static Func<int,int,bool> BreakSelection(EvalOption option)
         {
-            if (stop == limit) { return true; }
-            return false;
+            if (option.HasFlag(EvalOption.Max))
+            {
+                return Max;
+            }
+            if (option.HasFlag(EvalOption.MaxEqual))
+            {
+                return MaxEqual;
+            }
+            if (option.HasFlag(EvalOption.Equal))
+            {
+                return MaxEqual;
+            }
+            return null;
         }
 
-        /// <summary>
-        /// # Stops less than limit
-        /// </summary>
-        /// <param name="stop"></param>
-        /// <param name="distance"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        private static bool StopMax(int stop, int distance, int limit)
+        private static Func<int, int, bool> AcceptSelection(EvalOption option)
         {
-            if (stop < limit) { return true; }
-            return false;
+            if (option.HasFlag(EvalOption.Max))
+            {
+                return Max;
+            }
+            if (option.HasFlag(EvalOption.MaxEqual))
+            {
+                return MaxEqual;
+            }
+            if (option.HasFlag(EvalOption.Equal))
+            {
+                return Equal;
+            }
+            return null;
         }
 
-        /// <summary>
-        /// # Stops less or equal than limit
-        /// </summary>
-        /// <param name="stop"></param>
-        /// <param name="distance"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        private static bool StopMaxEqual(int stop, int distance, int limit)
+        private static Func<int, int, int, bool> StopOrDistanceSelection(EvalOption option, Func<int,int,bool> func)
         {
-            if (stop <= limit) { return true; }
-            return false;
+            if (option.HasFlag(EvalOption.Distance))
+            {
+                return (stop, distance, limit) => func(distance, limit);
+            }
+            if (option.HasFlag(EvalOption.Stop))
+            {
+                return (stop, distance, limit) => func(stop,limit);
+            }
+            return null;
         }
 
         #endregion Private

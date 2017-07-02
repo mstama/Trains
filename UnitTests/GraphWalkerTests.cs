@@ -21,7 +21,7 @@ namespace UnitTests
         public void FindPathsDistanceEqualTest()
         {
             // Act
-            var output = _target.FindPaths(_graph, "A", "B", 5, PathOption.DistanceEqual);
+            var output = _target.FindPaths(_graph, "A", "B", 5, EvalOption.Distance | EvalOption.Equal);
 
             // Assert
             Assert.NotEmpty(output);
@@ -33,7 +33,7 @@ namespace UnitTests
         public void FindPathsDistanceMaxEqualTest()
         {
             // Act
-            var output = _target.FindPaths(_graph, "A", "B", 5, PathOption.DistanceMaxEqual);
+            var output = _target.FindPaths(_graph, "A", "B", 5, EvalOption.Distance | EvalOption.MaxEqual);
 
             // Assert
             Assert.NotEmpty(output);
@@ -45,7 +45,7 @@ namespace UnitTests
         public void FindPathsDistanceMaxTest()
         {
             // Act
-            var output = _target.FindPaths(_graph, "A", "B", 5, PathOption.DistanceMax);
+            var output = _target.FindPaths(_graph, "A", "B", 5, EvalOption.Distance | EvalOption.Max);
 
             // Assert
             Assert.NotEmpty(output);
@@ -57,7 +57,7 @@ namespace UnitTests
         public void FindPathsStopEqualTest()
         {
             // Act
-            var output = _target.FindPaths(_graph, "A", "B", 3, PathOption.StopEqual);
+            var output = _target.FindPaths(_graph, "A", "B", 3, EvalOption.Stop | EvalOption.Equal);
 
             // Assert
             Assert.NotEmpty(output);
@@ -69,7 +69,7 @@ namespace UnitTests
         public void FindPathsStopMaxEqualTest()
         {
             // Act
-            var output = _target.FindPaths(_graph, "A", "B", 3, PathOption.StopMaxEqual);
+            var output = _target.FindPaths(_graph, "A", "B", 3, EvalOption.Stop | EvalOption.MaxEqual);
 
             // Assert
             Assert.NotEmpty(output);
@@ -81,7 +81,7 @@ namespace UnitTests
         public void FindPathsStopMaxTest()
         {
             // Act
-            var output = _target.FindPaths(_graph, "A", "B", 3, PathOption.StopMax);
+            var output = _target.FindPaths(_graph, "A", "B", 3, EvalOption.Stop | EvalOption.Max);
 
             // Assert
             Assert.NotEmpty(output);

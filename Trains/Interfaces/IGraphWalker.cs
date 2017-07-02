@@ -18,7 +18,7 @@ namespace Trains.Interfaces
         /// <param name="limit"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, PathOption option);
+        IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, EvalOption option);
 
         /// <summary>
         /// Return the shortest path to a town from a given town
