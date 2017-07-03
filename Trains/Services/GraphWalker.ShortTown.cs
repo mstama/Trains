@@ -15,6 +15,12 @@ namespace Trains.Services
 
             public Town Previous { get; set; }
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="dest"></param>
+            /// <param name="previous"></param>
+            /// <param name="distance"></param>
             public ShortTown(Town dest, Town previous, int distance)
             {
                 Data = dest;

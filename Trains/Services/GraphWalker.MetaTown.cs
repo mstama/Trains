@@ -44,6 +44,10 @@ namespace Trains.Services
                 Distance = 0;
             }
 
+            /// <summary>
+            /// Build breadcrumb
+            /// </summary>
+            /// <returns></returns>
             public string Breadcrumb()
             {
                 StringBuilder bread = new StringBuilder();

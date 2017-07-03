@@ -22,7 +22,7 @@ namespace Trains.Services
         /// <param name="limit"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, EvalOption option)
+        public IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, EvalOptions option)
         {
             List<string> found = new List<string>();
             if (!graph.Towns.ContainsKey(dest)) { return found; }
@@ -236,47 +236,47 @@ namespace Trains.Services
             return value <= limit;
         }
 
-        private static Func<int,int,bool> BreakSelection(EvalOption option)
+        private static Func<int,int,bool> BreakSelection(EvalOptions option)
         {
-            if (option.HasFlag(EvalOption.Max))
+            if (option.HasFlag(EvalOptions.Max))
             {
                 return Max;
             }
-            if (option.HasFlag(EvalOption.MaxEqual))
+            if (option.HasFlag(EvalOptions.MaxEqual))
             {
                 return MaxEqual;
             }
-            if (option.HasFlag(EvalOption.Equal))
+            if (option.HasFlag(EvalOptions.Equal))
             {
                 return MaxEqual;
             }
             return null;
         }
 
-        private static Func<int, int, bool> AcceptSelection(EvalOption option)
+        private static Func<int, int, bool> AcceptSelection(EvalOptions option)
         {
-            if (option.HasFlag(EvalOption.Max))
+            if (option.HasFlag(EvalOptions.Max))
             {
                 return Max;
             }
-            if (option.HasFlag(EvalOption.MaxEqual))
+            if (option.HasFlag(EvalOptions.MaxEqual))
             {
                 return MaxEqual;
             }
-            if (option.HasFlag(EvalOption.Equal))
+            if (option.HasFlag(EvalOptions.Equal))
             {
                 return Equal;
             }
             return null;
         }
 
-        private static Func<int, int, int, bool> StopOrDistanceSelection(EvalOption option, Func<int,int,bool> func)
+        private static Func<int, int, int, bool> StopOrDistanceSelection(EvalOptions option, Func<int,int,bool> func)
         {
-            if (option.HasFlag(EvalOption.Distance))
+            if (option.HasFlag(EvalOptions.Distance))
             {
                 return (stop, distance, limit) => func(distance, limit);
             }
-            if (option.HasFlag(EvalOption.Stop))
+            if (option.HasFlag(EvalOptions.Stop))
             {
                 return (stop, distance, limit) => func(stop,limit);
             }

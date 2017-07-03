@@ -6,7 +6,7 @@ using Trains.Services;
 
 namespace Trains
 {
-    internal class Program
+    internal static class Program
     {
         private static IGraphWalker _graphWalker;
         private static IGraphParser<string, IGraph> _parser;
@@ -17,7 +17,7 @@ namespace Trains
             Console.WriteLine("Output #{0}:{1}", number, q > 0 ? q.ToString() : "NO SUCH ROUTE");
         }
 
-        private static void FindPaths(IGraph graph, int number, string origin, string dest, int maxStops, EvalOption option)
+        private static void FindPaths(IGraph graph, int number, string origin, string dest, int maxStops, EvalOptions option)
         {
             var r = _graphWalker.FindPaths(graph, origin, dest, maxStops, option);
             Console.WriteLine("Output #{0}:{1}", number, r.Count);
@@ -66,10 +66,10 @@ namespace Trains
             CheckDistance(graph, 5, "A-E-D");
 
             // Q6
-            FindPaths(graph, 6, "C", "C", 3, EvalOption.Stop | EvalOption.MaxEqual);
+            FindPaths(graph, 6, "C", "C", 3, EvalOptions.Stop | EvalOptions.MaxEqual);
 
             // Q7
-            FindPaths(graph, 7, "A", "C", 4, EvalOption.Stop | EvalOption.Equal);
+            FindPaths(graph, 7, "A", "C", 4, EvalOptions.Stop | EvalOptions.Equal);
 
             // Q8
             ShortestPathDistance(graph, 8, "A", "C");
@@ -78,7 +78,7 @@ namespace Trains
             ShortestPathDistanceRoundTrip(graph, 9, "B");
 
             //Q10
-            FindPaths(graph, 10, "C", "C", 30, EvalOption.Distance | EvalOption.Max);
+            FindPaths(graph, 10, "C", "C", 30, EvalOptions.Distance | EvalOptions.Max);
 
             Console.ReadLine();
         }

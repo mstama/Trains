@@ -8,7 +8,7 @@ namespace Trains.Models
     /// Evaluation option
     /// </summary>
     [Flags]
-    public enum EvalOption
+    public enum EvalOptions
     {
         /// <summary> None </summary>
         None = 0,
