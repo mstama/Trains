@@ -3,6 +3,7 @@
 Trains
 
 [![Build status](https://ci.appveyor.com/api/projects/status/mlp1dcqkymkkpd7w?svg=true)](https://ci.appveyor.com/project/mstama/trains)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0178af2880644d9ab370d9357010a933)](https://www.codacy.com/app/marcostamashiro/Trains?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mstama/Trains&amp;utm_campaign=Badge_Grade)
 
 ### How to build
 
