@@ -16,15 +16,5 @@ namespace Trains.Services
         {
             return new Graph();
         }
-
-        /// <summary>
-        /// Provides a queriable graph
-        /// </summary>
-        /// <param name="graph"></param>
-        /// <returns></returns>
-        public IGraphWalker RetrieveGraph(IGraph graph)
-        {
-            return (IGraphWalker)graph;
-        }
     }
 }
