@@ -1,10 +1,17 @@
 version: 1.0.{build}
 skip_tags: true
 image: Visual Studio 2017
+environment:
+  SonarQube_Token:
+    secure: /kKhDi7ItX/FFtk4dCYgd9yhXFcEbvJXHpfU/Aop1dNj/QnVPEPsghXGaWTFjr7b
 before_build:
 - cmd: dotnet restore
+- cmd: choco install "msbuild-sonarqube-runner" -y
+- cmd: MSBuild.SonarQube.Runner.exe begin /k:"trains-master" /n:"Trains" /v:"1.0.0" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarQube_Token% /d:"sonar.organization=mstama-github"
 build:
   verbosity: minimal
+after_build:
+- cmd: MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarQube_Token%
 test_script:
 - cmd: dotnet test .\UnitTests\UnitTests.csproj
 skip_commits:
