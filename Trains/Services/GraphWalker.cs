@@ -29,7 +29,7 @@ namespace Trains.Services
             if (!graph.Towns.TryGetValue(origin, out Town originTown)) { return found; }
 
             // Stop condition
-            Func<int, int, int, bool> breakFunc = StopOrDistanceSelection(option,BreakSelection(option));
+            Func<int, int, int, bool> breakFunc = StopOrDistanceSelection(option, BreakSelection(option));
             // Break condition
             Func<int, int, int, bool> acceptFunc = StopOrDistanceSelection(option, AcceptSelection(option));
 
@@ -68,11 +68,7 @@ namespace Trains.Services
         {
             Town originTown = graph.Towns[origin];
             List<Tuple<string, string, int>> distances = new List<Tuple<string, string, int>>();
-            List<ShortTown> bag = new List<ShortTown>();
-            foreach (var town in graph.Towns.Values)
-            {
-                bag.Add(new ShortTown(town, null, int.MaxValue));
-            }
+            List<ShortTown> bag = InitTownBag(graph);
 
             ShortTown initial = bag.Find(t => _comparer.Equals(t.Data.Name, originTown.Name));
             initial.Distance = 0;
@@ -201,7 +197,51 @@ namespace Trains.Services
             return total;
         }
 
+        private List<ShortTown> InitTownBag(IGraph graph)
+        {
+            List<ShortTown> bag = new List<ShortTown>();
+            foreach (var town in graph.Towns.Values)
+            {
+                bag.Add(new ShortTown(town, null, int.MaxValue));
+            }
+            return bag;
+        }
+
         #region Private
+
+        private static Func<int, int, bool> AcceptSelection(EvalOptions option)
+        {
+            if (option.HasFlag(EvalOptions.Max))
+            {
+                return Max;
+            }
+            if (option.HasFlag(EvalOptions.MaxEqual))
+            {
+                return MaxEqual;
+            }
+            if (option.HasFlag(EvalOptions.Equal))
+            {
+                return Equal;
+            }
+            return null;
+        }
+
+        private static Func<int, int, bool> BreakSelection(EvalOptions option)
+        {
+            if (option.HasFlag(EvalOptions.Max))
+            {
+                return Max;
+            }
+            if (option.HasFlag(EvalOptions.MaxEqual))
+            {
+                return MaxEqual;
+            }
+            if (option.HasFlag(EvalOptions.Equal))
+            {
+                return MaxEqual;
+            }
+            return null;
+        }
 
         /// <summary>
         /// # equal limit
@@ -211,7 +251,7 @@ namespace Trains.Services
         /// <returns></returns>
         private static bool Equal(int value, int limit)
         {
-            return value==limit;
+            return value == limit;
         }
 
         /// <summary>
@@ -236,41 +276,7 @@ namespace Trains.Services
             return value <= limit;
         }
 
-        private static Func<int,int,bool> BreakSelection(EvalOptions option)
-        {
-            if (option.HasFlag(EvalOptions.Max))
-            {
-                return Max;
-            }
-            if (option.HasFlag(EvalOptions.MaxEqual))
-            {
-                return MaxEqual;
-            }
-            if (option.HasFlag(EvalOptions.Equal))
-            {
-                return MaxEqual;
-            }
-            return null;
-        }
-
-        private static Func<int, int, bool> AcceptSelection(EvalOptions option)
-        {
-            if (option.HasFlag(EvalOptions.Max))
-            {
-                return Max;
-            }
-            if (option.HasFlag(EvalOptions.MaxEqual))
-            {
-                return MaxEqual;
-            }
-            if (option.HasFlag(EvalOptions.Equal))
-            {
-                return Equal;
-            }
-            return null;
-        }
-
-        private static Func<int, int, int, bool> StopOrDistanceSelection(EvalOptions option, Func<int,int,bool> func)
+        private static Func<int, int, int, bool> StopOrDistanceSelection(EvalOptions option, Func<int, int, bool> func)
         {
             if (option.HasFlag(EvalOptions.Distance))
             {
@@ -278,7 +284,7 @@ namespace Trains.Services
             }
             if (option.HasFlag(EvalOptions.Stop))
             {
-                return (stop, distance, limit) => func(stop,limit);
+                return (stop, distance, limit) => func(stop, limit);
             }
             return null;
         }
