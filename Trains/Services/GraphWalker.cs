@@ -197,7 +197,7 @@ namespace Trains.Services
             return total;
         }
 
-        private List<ShortTown> InitTownBag(IGraph graph)
+        private static List<ShortTown> InitTownBag(IGraph graph)
         {
             List<ShortTown> bag = new List<ShortTown>();
             foreach (var town in graph.Towns.Values)
