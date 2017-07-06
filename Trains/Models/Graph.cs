@@ -52,10 +52,10 @@ namespace Trains.Models
 
         public override string ToString()
         {
-            StringBuilder text = new StringBuilder();
+            var text = new StringBuilder();
             foreach (var town in Towns)
             {
-                text.AppendFormat("{0}\n", town);
+                text.AppendFormat("{0}\n", town.ToString());
             }
             foreach (var town in Towns.Values)
             {

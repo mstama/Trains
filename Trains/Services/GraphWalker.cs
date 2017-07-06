@@ -17,6 +17,7 @@ namespace Trains.Services
         /// <summary>
         /// Find all paths between 2 towns (Dijkstra)
         /// </summary>
+        /// <param name="graph"></param>
         /// <param name="origin"></param>
         /// <param name="dest"></param>
         /// <param name="limit"></param>
@@ -24,7 +25,7 @@ namespace Trains.Services
         /// <returns></returns>
         public IList<string> FindPaths(IGraph graph, string origin, string dest, int limit, EvalOptions option)
         {
-            List<string> found = new List<string>();
+            var found = new List<string>();
             if (!graph.Towns.ContainsKey(dest)) { return found; }
             if (!graph.Towns.TryGetValue(origin, out Town originTown)) { return found; }
 
@@ -33,7 +34,7 @@ namespace Trains.Services
             // Break condition
             Func<int, int, int, bool> acceptFunc = StopOrDistanceSelection(option, AcceptSelection(option));
 
-            Queue<MetaTown> queue = new Queue<MetaTown>();
+            var queue = new Queue<MetaTown>();
             queue.Enqueue(new MetaTown(originTown, 0));
 
             while (queue.Count > 0)
@@ -67,7 +68,7 @@ namespace Trains.Services
         public Tuple<string, int> ShortestPath(IGraph graph, string origin, string dest)
         {
             Town originTown = graph.Towns[origin];
-            List<Tuple<string, string, int>> distances = new List<Tuple<string, string, int>>();
+            var distances = new List<Tuple<string, string, int>>();
             List<ShortTown> bag = InitTownBag(graph);
 
             ShortTown initial = bag.Find(t => _comparer.Equals(t.Data.Name, originTown.Name));
@@ -84,7 +85,7 @@ namespace Trains.Services
                 // Exits when find dest
                 if (_comparer.Equals(current.Data.Name, dest))
                 {
-                    StringBuilder path = new StringBuilder();
+                    var path = new StringBuilder();
                     string previous = tuple.Item2;
                     int dist = tuple.Item3;
                     while (!string.IsNullOrWhiteSpace(previous))
@@ -122,6 +123,7 @@ namespace Trains.Services
         /// <summary>
         /// Return shortest path distance between 2 towns
         /// </summary>
+        /// <param name="graph"></param>
         /// <param name="origin"></param>
         /// <param name="dest"></param>
         /// <returns></returns>
@@ -140,8 +142,8 @@ namespace Trains.Services
         public IList<Tuple<string, string, int>> ShortestPaths(IGraph graph, string origin)
         {
             Town originTown = graph.Towns[origin];
-            List<Tuple<string, string, int>> distances = new List<Tuple<string, string, int>>();
-            List<ShortTown> bag = new List<ShortTown>();
+            var distances = new List<Tuple<string, string, int>>();
+            var bag = new List<ShortTown>();
             foreach (var town in graph.Towns.Values)
             {
                 bag.Add(new ShortTown(town, null, int.MaxValue));
@@ -199,7 +201,7 @@ namespace Trains.Services
 
         private static List<ShortTown> InitTownBag(IGraph graph)
         {
-            List<ShortTown> bag = new List<ShortTown>();
+            var bag = new List<ShortTown>();
             foreach (var town in graph.Towns.Values)
             {
                 bag.Add(new ShortTown(town, null, int.MaxValue));
@@ -211,15 +213,15 @@ namespace Trains.Services
 
         private static Func<int, int, bool> AcceptSelection(EvalOptions option)
         {
-            if (option.HasFlag(EvalOptions.Max))
+            if ((option & EvalOptions.Max) != 0)
             {
                 return Max;
             }
-            if (option.HasFlag(EvalOptions.MaxEqual))
+            if ((option & EvalOptions.MaxEqual) != 0)
             {
                 return MaxEqual;
             }
-            if (option.HasFlag(EvalOptions.Equal))
+            if ((option & EvalOptions.Equal) != 0)
             {
                 return Equal;
             }
@@ -228,15 +230,15 @@ namespace Trains.Services
 
         private static Func<int, int, bool> BreakSelection(EvalOptions option)
         {
-            if (option.HasFlag(EvalOptions.Max))
+            if ((option & EvalOptions.Max) != 0)
             {
                 return Max;
             }
-            if (option.HasFlag(EvalOptions.MaxEqual))
+            if ((option & EvalOptions.MaxEqual) != 0)
             {
                 return MaxEqual;
             }
-            if (option.HasFlag(EvalOptions.Equal))
+            if ((option & EvalOptions.Equal) != 0)
             {
                 return MaxEqual;
             }
@@ -278,11 +280,11 @@ namespace Trains.Services
 
         private static Func<int, int, int, bool> StopOrDistanceSelection(EvalOptions option, Func<int, int, bool> func)
         {
-            if (option.HasFlag(EvalOptions.Distance))
+            if ((option & EvalOptions.Distance) != 0)
             {
                 return (stop, distance, limit) => func(distance, limit);
             }
-            if (option.HasFlag(EvalOptions.Stop))
+            if ((option & EvalOptions.Stop) != 0)
             {
                 return (stop, distance, limit) => func(stop, limit);
             }

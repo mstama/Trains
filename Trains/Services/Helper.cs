@@ -7,7 +7,7 @@ namespace Trains.Services
     /// </summary>
     public static class Helper
     {
-        private static char[] _separators = { ',', ' ', '-' };
+        private static readonly char[] _separators = { ',', ' ', '-' };
 
         /// <summary>
         /// Separate names in a string array
@@ -16,8 +16,7 @@ namespace Trains.Services
         /// <returns></returns>
         public static string[] ExtractNames(string text)
         {
-            var names = text.Split(_separators, StringSplitOptions.RemoveEmptyEntries);
-            return names;
+            return text.Split(_separators, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

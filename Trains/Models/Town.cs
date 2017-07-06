@@ -12,6 +12,7 @@ namespace Trains.Models
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="graph"></param>
         /// <param name="name"></param>
         public Town(IGraph graph, string name)
         {

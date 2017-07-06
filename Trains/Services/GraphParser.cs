@@ -8,7 +8,7 @@ namespace Trains.Services
     /// </summary>
     public class GraphParser : IGraphParser<string, IGraph>
     {
-        private static char[] _separator = { ',', ' ' };
+        private static readonly char[] _separator = { ',', ' ' };
         private readonly IGraphFactory _factory;
 
         /// <summary>
@@ -23,13 +23,12 @@ namespace Trains.Services
         /// <summary>
         /// Parse text and returna a graph
         /// </summary>
-        /// <param name="text"></param>
+        /// <param name="input"></param>
         /// <returns></returns>
-        public IGraph Parse(string text)
+        public IGraph Parse(string input)
         {
             var graph = _factory.CreateGraph();
-            var commands = text.Split(_separator, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var command in commands)
+            foreach (var command in input.Split(_separator, StringSplitOptions.RemoveEmptyEntries))
             {
                 graph.AddRoute(command[0].ToString(), command[1].ToString(), int.Parse(command.Substring(2)));
             }
