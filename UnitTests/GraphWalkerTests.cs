@@ -8,8 +8,8 @@ namespace UnitTests
     public class GraphWalkerTests
     {
         private const string _category = "GraphWalker";
-        private IGraph _graph;
-        private IGraphWalker _target = new GraphWalker();
+        private readonly IGraph _graph;
+        private readonly IGraphWalker _target = new GraphWalker();
 
         public GraphWalkerTests()
         {

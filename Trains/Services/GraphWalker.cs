@@ -102,7 +102,7 @@ namespace Trains.Services
 
                 foreach (var route in routes.Values)
                 {
-                    var target = bag.FirstOrDefault(t => _comparer.Equals(t.Data.Name, route.Destination.Name));
+                    var target = bag.Find(t => _comparer.Equals(t.Data.Name, route.Destination.Name));
                     // not visited yet
                     if (target != null)
                     {
@@ -162,7 +162,7 @@ namespace Trains.Services
 
                 foreach (var route in routes.Values)
                 {
-                    var target = bag.FirstOrDefault(t => _comparer.Equals(t.Data.Name, route.Destination.Name));
+                    var target = bag.Find(t => _comparer.Equals(t.Data.Name, route.Destination.Name));
                     // not visited yet
                     if (target != null)
                     {

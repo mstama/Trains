@@ -14,7 +14,7 @@ namespace UnitTests
             // Arrange
             var graph = new Graph();
             // Act
-            var output = graph.AddRoute("X", "Y", 5);
+            graph.AddRoute("X", "Y", 5);
 
             // Assert
             Assert.NotEmpty(graph.Towns);
@@ -30,10 +30,10 @@ namespace UnitTests
         {
             // Arrange
             var graph = new Graph();
-            var t1 = graph.AddTown("X");
-            var t2 = graph.AddTown("Y");
+            graph.AddTown("X");
+            graph.AddTown("Y");
             // Act
-            var output = graph.AddRoute("X", "Y", 5);
+            graph.AddRoute("X", "Y", 5);
 
             // Assert
             Assert.NotEmpty(graph.Towns);
@@ -50,7 +50,7 @@ namespace UnitTests
             // Arrange
             var graph = new Graph();
             // Act
-            var output = graph.AddTown("Z");
+            graph.AddTown("Z");
 
             // Assert
             Assert.True(graph.Towns.ContainsKey("Z"));
@@ -62,9 +62,9 @@ namespace UnitTests
         {
             // Arrange
             var graph = new Graph();
-            var t1 = graph.AddTown("Z");
+            graph.AddTown("Z");
             // Act
-            var output = graph.AddTown("Z");
+            graph.AddTown("Z");
 
             // Assert
             Assert.True(graph.Towns.ContainsKey("Z"));

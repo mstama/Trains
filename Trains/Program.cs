@@ -77,8 +77,6 @@ namespace Trains
 
             //Q10
             FindPaths(graph, 10, "C", "C", 30, EvalOptions.Distance | EvalOptions.Max);
-
-            Console.ReadLine();
         }
 
         private static void ShortestPathDistance(IGraph graph, int number, string origin, string dest)
