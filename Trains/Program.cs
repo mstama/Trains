@@ -8,8 +8,15 @@ namespace Trains
 {
     internal static class Program
     {
-        private static IGraphWalker _graphWalker;
-        private static IGraphParser<string, IGraph> _parser;
+        private static readonly IGraphWalker _graphWalker;
+        private static readonly IGraphParser<string, IGraph> _parser;
+
+        // Composition root
+        static Program()
+        {
+            _parser = new GraphParser(new GraphFactory());
+            _graphWalker = new GraphWalker();
+        }
 
         private static void CheckDistance(IGraph graph, int number, string route)
         {
@@ -23,17 +30,8 @@ namespace Trains
             Console.WriteLine("Output #{0}:{1}", number, r.Count);
         }
 
-        // Composition root
-        private static void Init()
-        {
-            _parser = new GraphParser(new GraphFactory());
-            _graphWalker = new GraphWalker();
-        }
-
         private static void Main(string[] args)
         {
-            Init();
-
             if (args.Length == 0)
             {
                 Console.WriteLine("Input file required!");
