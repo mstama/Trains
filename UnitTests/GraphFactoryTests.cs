@@ -7,7 +7,7 @@ namespace UnitTests
     public class GraphFactoryTests
     {
         private const string _category = "GraphFactory";
-        private GraphFactory _target = new GraphFactory();
+        private readonly GraphFactory _target = new GraphFactory();
 
         [Fact]
         [Trait("Category", _category)]

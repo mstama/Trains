@@ -14,8 +14,8 @@ namespace UnitTests
         public void ParseDoubleTest()
         {
             // Arrange
-            GraphFactory factory = new GraphFactory();
-            GraphParser target = new GraphParser(factory);
+            var factory = new GraphFactory();
+            var target = new GraphParser(factory);
 
             // Act // Assert
             Assert.Throws<FormatException>(() => target.Parse("AB"));
@@ -26,8 +26,8 @@ namespace UnitTests
         public void ParseEmptyTest()
         {
             // Arrange
-            GraphFactory factory = new GraphFactory();
-            GraphParser target = new GraphParser(factory);
+            var factory = new GraphFactory();
+            var target = new GraphParser(factory);
 
             // Act
             var output = target.Parse("");
@@ -42,8 +42,8 @@ namespace UnitTests
         public void ParseSingleTest()
         {
             // Arrange
-            GraphFactory factory = new GraphFactory();
-            GraphParser target = new GraphParser(factory);
+            var factory = new GraphFactory();
+            var target = new GraphParser(factory);
 
             // Act // Assert
             Assert.Throws<IndexOutOfRangeException>(() => target.Parse("A"));
@@ -54,8 +54,8 @@ namespace UnitTests
         public void ParseTest()
         {
             // Arrange
-            GraphFactory factory = new GraphFactory();
-            GraphParser target = new GraphParser(factory);
+            var factory = new GraphFactory();
+            var target = new GraphParser(factory);
 
             // Act
             var output = target.Parse("AB5");

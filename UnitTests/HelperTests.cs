@@ -11,11 +11,8 @@ namespace UnitTests
         [Trait("Category", _category)]
         public void ExtractTownsSingle()
         {
-            // Arrange
-            string input = "A";
-
-            // Act
-            var output = Helper.ExtractNames(input);
+            // Arrange // Act
+            var output = Helper.ExtractNames("A");
 
             // Assert
             Assert.IsType<string[]>(output);
